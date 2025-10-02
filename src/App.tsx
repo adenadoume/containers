@@ -609,6 +609,7 @@ function App() {
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
                         />
                       ) : (
                         <span className="font-semibold text-cyan-400">{item.cbm.toFixed(2)}</span>
@@ -627,6 +628,7 @@ function App() {
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
                         />
                       ) : (
                         item.cartons
@@ -645,6 +647,7 @@ function App() {
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
                         />
                       ) : (
                         item.grossWeight.toLocaleString('en-US')
@@ -664,6 +667,7 @@ function App() {
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
                         />
                       ) : (
                         `$${item.productCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}`
@@ -682,6 +686,7 @@ function App() {
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
                         />
                       ) : (
                         `$${item.freightCost}`
