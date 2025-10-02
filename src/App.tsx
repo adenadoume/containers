@@ -601,15 +601,14 @@ function App() {
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cbm' ? (
                         <input
-                          type="number"
-                          step="0.01"
+                          type="text"
                           value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
+                          onChange={(e) => setEditValue(e.target.value.replace(/[^0-9.]/g, ''))}
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
-                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
+                          placeholder="0.00"
                         />
                       ) : (
                         <span className="font-semibold text-cyan-400">{item.cbm.toFixed(2)}</span>
@@ -621,14 +620,14 @@ function App() {
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cartons' ? (
                         <input
-                          type="number"
+                          type="text"
                           value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
+                          onChange={(e) => setEditValue(e.target.value.replace(/[^0-9]/g, ''))}
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
-                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
+                          placeholder="0"
                         />
                       ) : (
                         item.cartons
@@ -640,14 +639,14 @@ function App() {
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'grossWeight' ? (
                         <input
-                          type="number"
+                          type="text"
                           value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
+                          onChange={(e) => setEditValue(e.target.value.replace(/[^0-9]/g, ''))}
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
-                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
+                          placeholder="0"
                         />
                       ) : (
                         item.grossWeight.toLocaleString('en-US')
@@ -659,15 +658,14 @@ function App() {
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'productCost' ? (
                         <input
-                          type="number"
-                          step="0.1"
+                          type="text"
                           value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
+                          onChange={(e) => setEditValue(e.target.value.replace(/[^0-9.]/g, ''))}
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
-                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
+                          placeholder="0.00"
                         />
                       ) : (
                         `$${item.productCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}`
@@ -679,14 +677,14 @@ function App() {
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'freightCost' ? (
                         <input
-                          type="number"
+                          type="text"
                           value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
+                          onChange={(e) => setEditValue(e.target.value.replace(/[^0-9]/g, ''))}
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
-                          style={{ MozAppearance: 'textfield', appearance: 'textfield' } as React.CSSProperties}
+                          placeholder="0"
                         />
                       ) : (
                         `$${item.freightCost}`
