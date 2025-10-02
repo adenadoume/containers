@@ -269,127 +269,128 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Container Planning</h1>
+        <div className="mb-6 text-center animate-fade-in">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Container Planning</h1>
+          <p className="text-lg text-gray-300">Logistics Management System</p>
+        </div>
           
-          {/* Container Selector */}
-          <div className="flex items-center gap-4 mb-6">
-            <span className="text-lg font-medium text-gray-700">Select Container</span>
-            <div className="relative" style={{ width: '50%' }}>
-              <button
-                onClick={() => setShowContainerDropdown(!showContainerDropdown)}
-                className="w-full bg-white border-2 border-gray-300 rounded-lg px-4 py-3 flex items-center justify-between hover:border-blue-500 transition-colors"
-              >
-                <span className="text-lg font-semibold text-gray-900">{selectedContainer}</span>
-                <ChevronDown className="w-5 h-5 text-gray-500" />
-              </button>
-              
-              {showContainerDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                  {containers.map((container) => (
-                    <button
-                      key={container}
-                      onClick={() => {
-                        setSelectedContainer(container);
-                        setShowContainerDropdown(false);
-                      }}
-                      className={`w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors ${
-                        container === selectedContainer ? 'bg-blue-100 font-semibold' : ''
-                      }`}
-                    >
-                      {container}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+        {/* Container Selector */}
+        <div className="flex items-center justify-center gap-4 mb-8">
+          <span className="text-lg font-medium text-gray-300">Select Container</span>
+          <div className="relative" style={{ width: '50%' }}>
+            <button
+              onClick={() => setShowContainerDropdown(!showContainerDropdown)}
+              className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border-2 border-gray-600 rounded-lg px-6 py-3 flex items-center justify-between hover:border-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              <span className="text-xl font-bold text-blue-400">{selectedContainer}</span>
+              <ChevronDown className="w-5 h-5 text-gray-400" />
+            </button>
+            
+            {showContainerDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl z-10">
+                {containers.map((container) => (
+                  <button
+                    key={container}
+                    onClick={() => {
+                      setSelectedContainer(container);
+                      setShowContainerDropdown(false);
+                    }}
+                    className={`w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors ${
+                      container === selectedContainer ? 'bg-blue-900/50 font-semibold text-blue-400' : 'text-white'
+                    }`}
+                  >
+                    {container}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
 
-          {/* Summary Boxes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-blue-100 rounded-lg p-5 border border-blue-200">
-              <div className="text-sm text-gray-700 mb-1">CBM</div>
-              <div className="text-4xl font-bold text-gray-900">{totalCBM.toFixed(2)}</div>
-            </div>
-            <div className="bg-gray-100 rounded-lg p-5 border border-gray-200">
-              <div className="text-sm text-gray-700 mb-1">Cartons</div>
-              <div className="text-4xl font-bold text-gray-900">{totalCartons}</div>
-            </div>
-            <div className="bg-gray-100 rounded-lg p-5 border border-gray-200">
-              <div className="text-sm text-gray-700 mb-1">Gross weight</div>
-              <div className="text-4xl font-bold text-gray-900">{totalGrossWeight.toLocaleString('en-US')}</div>
-            </div>
+        {/* Summary Boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 animate-slide-up">
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/30 border border-gray-700">
+            <div className="text-sm text-white mb-2">CBM</div>
+            <div className="text-4xl font-bold text-blue-400">{totalCBM.toFixed(2)}</div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-green-100 rounded-lg p-5 border border-green-200">
-              <div className="text-sm text-gray-700 mb-1">CBM Ready to ship</div>
-              <div className="text-4xl font-bold text-gray-900">{cbmReadyToShip.toFixed(2)}</div>
-            </div>
-            <div className="bg-orange-100 rounded-lg p-5 border border-orange-200">
-              <div className="text-sm text-gray-700 mb-1">CBM Awaiting Supplier</div>
-              <div className="text-4xl font-bold text-gray-900">{cbmAwaitingSupplier.toFixed(2)}</div>
-            </div>
-            <div className="bg-pink-100 rounded-lg p-5 border border-pink-200">
-              <div className="text-sm text-gray-700 mb-1">Need Payment</div>
-              <div className="text-4xl font-bold text-gray-900">{needPaymentCount}</div>
-            </div>
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-500/30 border border-gray-700">
+            <div className="text-sm text-white mb-2">Cartons</div>
+            <div className="text-4xl font-bold text-white">{totalCartons}</div>
           </div>
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-500/30 border border-gray-700">
+            <div className="text-sm text-white mb-2">Gross weight</div>
+            <div className="text-4xl font-bold text-white">{totalGrossWeight.toLocaleString('en-US')}</div>
+          </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg p-5 border-2 border-gray-200">
-              <div className="text-sm text-green-700 font-semibold mb-1">Product cost</div>
-              <div className="text-3xl font-bold text-green-700">${totalProductCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}</div>
-            </div>
-            <div className="bg-white rounded-lg p-5 border-2 border-gray-200">
-              <div className="text-sm text-pink-600 font-semibold mb-1">Freight cost to forwarder</div>
-              <div className="text-3xl font-bold text-pink-600">${totalFreightCost.toLocaleString('en-US')}</div>
-            </div>
-            <div className="bg-white rounded-lg p-5 border-2 border-gray-200">
-              <div className="text-sm text-blue-600 font-semibold mb-1">Total product cost</div>
-              <div className="text-3xl font-bold text-blue-600">${totalCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}</div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 animate-slide-up">
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 border border-gray-700">
+            <div className="text-sm text-white mb-2">CBM Ready to ship</div>
+            <div className="text-4xl font-bold text-green-400">{cbmReadyToShip.toFixed(2)}</div>
+          </div>
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/30 border border-gray-700">
+            <div className="text-sm text-white mb-2">CBM Awaiting Supplier</div>
+            <div className="text-4xl font-bold text-orange-400">{cbmAwaitingSupplier.toFixed(2)}</div>
+          </div>
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/30 border border-gray-700">
+            <div className="text-sm text-white mb-2">Need Payment</div>
+            <div className="text-4xl font-bold text-pink-400">{needPaymentCount}</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 animate-slide-up">
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 border border-gray-700">
+            <div className="text-sm text-gray-300 font-semibold mb-2">Product cost</div>
+            <div className="text-3xl font-bold text-green-400">${totalProductCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}</div>
+          </div>
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/30 border border-gray-700">
+            <div className="text-sm text-gray-300 font-semibold mb-2">Freight cost to forwarder</div>
+            <div className="text-3xl font-bold text-pink-400">${totalFreightCost.toLocaleString('en-US')}</div>
+          </div>
+          <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/30 border border-gray-700">
+            <div className="text-sm text-gray-300 font-semibold mb-2">Total product cost</div>
+            <div className="text-3xl font-bold text-cyan-400">${totalCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}</div>
           </div>
         </div>
 
         {/* Data Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl shadow-2xl border border-gray-600 overflow-hidden animate-slide-up">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-900 border-b-2 border-gray-600">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ref</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Supplier</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">CBM</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Cartons</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Gross Weight</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Product Cost</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Freight Cost</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Awaiting</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">PL</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">CI</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Payment</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">HBL</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Certificates</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Ref</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Supplier</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Product</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">CBM</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Cartons</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Gross Weight</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Product Cost</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Freight Cost</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Client</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Awaiting</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">PL</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">CI</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">Payment</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">HBL</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">Certificates</th>
                 </tr>
               </thead>
               <tbody>
                 {containerData.map((item, index) => (
                   <tr
                     key={item.id}
-                    className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                    className={`border-b border-gray-700 hover:bg-gray-700/50 transition-all duration-200 ${
+                      index % 2 === 0 ? 'bg-gray-800/50' : 'bg-gray-800/30'
                     }`}
                   >
                     {/* Editable cells */}
                     <td 
-                      className="px-4 py-3 text-sm font-medium text-gray-900 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm font-medium text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'referenceCode', item.referenceCode)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'referenceCode' ? (
@@ -400,14 +401,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
                         />
                       ) : (
-                        item.referenceCode || <span className="text-gray-400">Click to edit</span>
+                        item.referenceCode || <span className="text-gray-500">Click to edit</span>
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-gray-700 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'supplier', item.supplier)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'supplier' ? (
@@ -418,14 +419,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
                         />
                       ) : (
-                        item.supplier || <span className="text-gray-400">Click to edit</span>
+                        item.supplier || <span className="text-gray-500">Click to edit</span>
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-gray-700 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'product', item.product)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'product' ? (
@@ -436,14 +437,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
                         />
                       ) : (
                         item.product || <span className="text-gray-400">Click to edit</span>
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-right text-gray-900 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'cbm', item.cbm)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cbm' ? (
@@ -455,14 +456,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
                         />
                       ) : (
                         item.cbm.toFixed(2)
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-right text-gray-900 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'cartons', item.cartons)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cartons' ? (
@@ -473,14 +474,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
                         />
                       ) : (
                         item.cartons
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-right text-gray-900 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'grossWeight', item.grossWeight)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'grossWeight' ? (
@@ -491,14 +492,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
                         />
                       ) : (
                         item.grossWeight.toLocaleString('en-US')
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-right font-medium text-gray-900 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm text-right font-medium text-green-400 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'productCost', item.productCost)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'productCost' ? (
@@ -510,14 +511,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
                         />
                       ) : (
                         `$${item.productCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}`
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-right text-gray-900 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'freightCost', item.freightCost)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'freightCost' ? (
@@ -528,14 +529,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
                         />
                       ) : (
                         `$${item.freightCost}`
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-gray-700 cursor-pointer hover:bg-blue-50"
+                      className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'client', item.client)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'client' ? (
@@ -546,7 +547,7 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none"
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
                         />
                       ) : (
                         item.client || <span className="text-gray-400">Click to edit</span>
@@ -568,7 +569,7 @@ function App() {
                       <select 
                         value={item.awaiting}
                         onChange={(e) => updateAwaiting(item.id, e.target.value)}
-                        className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="text-sm bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="-">-</option>
                         <option value="Payment">Payment</option>
@@ -582,7 +583,7 @@ function App() {
                         {item.packingList ? (
                           <button
                             onClick={() => openPreview(item.packingList!, 'Packing List')}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
                             title="View file"
                           >
                             <FileText className="w-5 h-5" />
@@ -597,7 +598,7 @@ function App() {
                         />
                         <button
                           onClick={() => fileInputRefs.current[`${item.id}-packingList`]?.click()}
-                          className="text-gray-400 hover:text-blue-600 transition-colors"
+                          className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
                           <Upload className="w-4 h-4" />
@@ -609,7 +610,7 @@ function App() {
                         {item.commercialInvoice ? (
                           <button
                             onClick={() => openPreview(item.commercialInvoice!, 'Commercial Invoice')}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
                             title="View file"
                           >
                             <FileText className="w-5 h-5" />
@@ -624,7 +625,7 @@ function App() {
                         />
                         <button
                           onClick={() => fileInputRefs.current[`${item.id}-commercialInvoice`]?.click()}
-                          className="text-gray-400 hover:text-blue-600 transition-colors"
+                          className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
                           <Upload className="w-4 h-4" />
@@ -636,7 +637,7 @@ function App() {
                         {item.payment ? (
                           <button
                             onClick={() => openPreview(item.payment!, 'Payment')}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
                             title="View file"
                           >
                             <FileText className="w-5 h-5" />
@@ -651,7 +652,7 @@ function App() {
                         />
                         <button
                           onClick={() => fileInputRefs.current[`${item.id}-payment`]?.click()}
-                          className="text-gray-400 hover:text-blue-600 transition-colors"
+                          className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
                           <Upload className="w-4 h-4" />
@@ -663,7 +664,7 @@ function App() {
                         {item.hbl ? (
                           <button
                             onClick={() => openPreview(item.hbl!, 'HBL')}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
                             title="View file"
                           >
                             <FileText className="w-5 h-5" />
@@ -678,7 +679,7 @@ function App() {
                         />
                         <button
                           onClick={() => fileInputRefs.current[`${item.id}-hbl`]?.click()}
-                          className="text-gray-400 hover:text-blue-600 transition-colors"
+                          className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
                           <Upload className="w-4 h-4" />
@@ -690,7 +691,7 @@ function App() {
                         {item.certificates ? (
                           <button
                             onClick={() => openPreview(item.certificates!, 'Certificates')}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
                             title="View file"
                           >
                             <FileText className="w-5 h-5" />
@@ -705,7 +706,7 @@ function App() {
                         />
                         <button
                           onClick={() => fileInputRefs.current[`${item.id}-certificates`]?.click()}
-                          className="text-gray-400 hover:text-blue-600 transition-colors"
+                          className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
                           <Upload className="w-4 h-4" />
@@ -719,10 +720,10 @@ function App() {
           </div>
 
           {/* Add New Row Button */}
-          <div className="border-t border-gray-200 p-3">
+          <div className="border-t border-gray-700 p-3 bg-gray-800/50">
             <button 
               onClick={addNewRow}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+              className="flex items-center gap-2 text-sm text-gray-300 hover:text-blue-400 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Add new item
