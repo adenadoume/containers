@@ -48,6 +48,38 @@ function App() {
 
   const [containers, setContainers] = useState(['I110.11', 'I110.9', 'I112.5', 'I115.3']);
 
+  // Initialize container from URL on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const containerFromUrl = urlParams.get('container');
+    
+    if (containerFromUrl && containers.includes(containerFromUrl)) {
+      setSelectedContainer(containerFromUrl);
+    }
+  }, []);
+
+  // Update URL when container changes
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('container', selectedContainer);
+    window.history.pushState({}, '', url.toString());
+  }, [selectedContainer]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const containerFromUrl = urlParams.get('container');
+      
+      if (containerFromUrl && containers.includes(containerFromUrl)) {
+        setSelectedContainer(containerFromUrl);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [containers]);
+
   const initialData: ContainerItem[] = [
     {
       id: 1,
@@ -542,6 +574,26 @@ function App() {
                 </div>
               )}
             </div>
+            
+            {/* Share Container Button */}
+            <button
+              onClick={(e) => {
+                const url = new URL(window.location.href);
+                url.searchParams.set('container', selectedContainer);
+                navigator.clipboard.writeText(url.toString());
+                // Show a brief notification
+                const button = e.currentTarget;
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                setTimeout(() => {
+                  button.textContent = originalText;
+                }, 2000);
+              }}
+              className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/50"
+              title="Share this container link"
+            >
+              🔗 Share Container
+            </button>
           </div>
 
           {/* Import/Export Buttons */}
@@ -770,7 +822,7 @@ function App() {
                           placeholder="0.00"
                         />
                       ) : (
-                        `$${item.productCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}`
+                        `$${Math.round(item.productCost).toLocaleString('en-US')}`
                       )}
                     </td>
                     <td 
@@ -789,7 +841,7 @@ function App() {
                           placeholder="0"
                         />
                       ) : (
-                        `$${item.freightCost}`
+                        `$${Math.round(item.freightCost).toLocaleString('en-US')}`
                       )}
                     </td>
                     <td 
@@ -814,7 +866,7 @@ function App() {
                       <select 
                         value={item.status}
                         onChange={(e) => updateStatus(item.id, e.target.value as ContainerItem['status'])}
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white ${getStatusColor(item.status)} cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        className={`inline-flex items-center px-3 py-2 rounded-full text-lg font-medium text-white ${getStatusColor(item.status)} cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500`}
                       >
                         <option value="Ready to Ship">Ready to Ship</option>
                         <option value="Awaiting Supplier">Awaiting Supplier</option>
@@ -826,7 +878,7 @@ function App() {
                       <select 
                         value={item.awaiting}
                         onChange={(e) => updateAwaiting(item.id, e.target.value)}
-                        className="text-base bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="-">-</option>
                         <option value="Payment">Payment</option>
