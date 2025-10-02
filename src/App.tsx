@@ -40,10 +40,12 @@ function App() {
     file: null,
     name: ''
   });
+  const [showAddContainer, setShowAddContainer] = useState(false);
+  const [newContainerName, setNewContainerName] = useState('');
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const excelImportRef = useRef<HTMLInputElement>(null);
 
-  const containers = ['I110.11', 'I110.9', 'I112.5', 'I115.3'];
+  const [containers, setContainers] = useState(['I110.11', 'I110.9', 'I112.5', 'I115.3']);
 
   const initialData: ContainerItem[] = [
     {
@@ -169,6 +171,24 @@ function App() {
 
   const [containerData, setContainerData] = useState<ContainerItem[]>([]);
 
+  // Load containers from localStorage on mount
+  useEffect(() => {
+    const savedContainers = localStorage.getItem('containers');
+    if (savedContainers) {
+      try {
+        const parsed = JSON.parse(savedContainers);
+        setContainers(parsed);
+      } catch (error) {
+        console.error('Failed to load saved containers:', error);
+      }
+    }
+  }, []);
+
+  // Save containers to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('containers', JSON.stringify(containers));
+  }, [containers]);
+
   // Load data from localStorage on mount and when container changes
   useEffect(() => {
     const savedData = localStorage.getItem(`container_${selectedContainer}`);
@@ -213,6 +233,18 @@ function App() {
       awaiting: '-',
     };
     setContainerData([...containerData, newItem]);
+  };
+
+  // Add new container
+  const addNewContainer = () => {
+    if (newContainerName.trim() && !containers.includes(newContainerName.trim())) {
+      const newContainer = newContainerName.trim();
+      setContainers([...containers, newContainer]);
+      setSelectedContainer(newContainer);
+      setContainerData([]); // Start with empty data for new container
+      setNewContainerName('');
+      setShowAddContainer(false);
+    }
   };
 
   // Start editing a cell
@@ -479,6 +511,20 @@ function App() {
                       {container}
                     </button>
                   ))}
+                  
+                  {/* Add New Container Button */}
+                  <div className="border-t border-gray-600">
+                    <button
+                      onClick={() => {
+                        setShowAddContainer(!showAddContainer);
+                        setShowContainerDropdown(false);
+                      }}
+                      className="w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors text-green-400 hover:text-green-300 flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add New Container
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1239,6 +1285,75 @@ function App() {
                   Close
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Container Modal */}
+      {showAddContainer && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-2xl w-full max-w-md border-2 border-gray-600">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+              <div className="flex items-center gap-3">
+                <Plus className="w-6 h-6 text-green-400" />
+                <h3 className="text-xl font-semibold text-white">Add New Container</h3>
+              </div>
+              <button
+                onClick={() => setShowAddContainer(false)}
+                className="text-gray-400 hover:text-gray-200 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">
+                  Container Name
+                </label>
+                <input
+                  type="text"
+                  value={newContainerName}
+                  onChange={(e) => setNewContainerName(e.target.value)}
+                  placeholder="e.g., I120.15, I125.8"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
+                  autoFocus
+                  onKeyDown={(e) => e.key === 'Enter' && addNewContainer()}
+                />
+                <div className="mt-2 text-xs text-gray-400">
+                  💡 Use your container naming convention (e.g., I110.11, I120.15)
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={addNewContainer}
+                  disabled={!newContainerName.trim() || containers.includes(newContainerName.trim())}
+                  className="flex-1 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 disabled:from-gray-600 disabled:to-gray-500 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  ➕ Create Container
+                </button>
+                <button
+                  onClick={() => setShowAddContainer(false)}
+                  className="flex-1 bg-gradient-to-r from-gray-600 to-gray-500 hover:from-gray-700 hover:to-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300"
+                >
+                  Cancel
+                </button>
+              </div>
+              
+              {newContainerName.trim() && containers.includes(newContainerName.trim()) && (
+                <div className="bg-red-900/30 border border-red-500 rounded-lg p-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-400">⚠️</span>
+                    <span className="text-red-300 text-sm">
+                      Container "{newContainerName}" already exists
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
