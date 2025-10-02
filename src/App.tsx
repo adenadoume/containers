@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
-import { ChevronDown, FileText, Eye, Plus, X, Upload } from 'lucide-react';
+import { ChevronDown, FileText, Eye, Plus, X, Upload, Trash2, Download, FileSpreadsheet } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 interface ContainerItem {
   id: number;
@@ -32,7 +33,10 @@ function App() {
   const [previewFile, setPreviewFile] = useState<{ type: string; url: string; name: string } | null>(null);
   const [editingCell, setEditingCell] = useState<EditingCell>(null);
   const [editValue, setEditValue] = useState<string>('');
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importMode, setImportMode] = useState<'replace' | 'add'>('add');
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+  const excelImportRef = useRef<HTMLInputElement>(null);
 
   const containers = ['I110.11', 'I110.9', 'I112.5', 'I115.3'];
 
@@ -236,6 +240,91 @@ function App() {
     ));
   };
 
+  // Delete row
+  const deleteRow = (id: number) => {
+    if (confirm('Are you sure you want to delete this item?')) {
+      setContainerData(containerData.filter(item => item.id !== id));
+    }
+  };
+
+  // Delete attachment
+  const deleteAttachment = (id: number, field: keyof ContainerItem) => {
+    setContainerData(containerData.map(item => 
+      item.id === id ? { ...item, [field]: undefined } : item
+    ));
+  };
+
+  // Export to Excel
+  const exportToExcel = () => {
+    const exportData = containerData.map(item => ({
+      'Reference Code': item.referenceCode,
+      'Supplier': item.supplier,
+      'Product': item.product,
+      'CBM': item.cbm,
+      'Cartons': item.cartons,
+      'Gross Weight': item.grossWeight,
+      'Product Cost': item.productCost,
+      'Freight Cost': item.freightCost,
+      'Client': item.client,
+      'Status': item.status,
+      'Awaiting': item.awaiting,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, selectedContainer);
+    
+    // Auto-size columns
+    const maxWidth = 50;
+    const colWidths = Object.keys(exportData[0] || {}).map(key => ({
+      wch: Math.min(maxWidth, Math.max(key.length, ...exportData.map(row => String(row[key as keyof typeof row]).length)))
+    }));
+    worksheet['!cols'] = colWidths;
+    
+    XLSX.writeFile(workbook, `Container_${selectedContainer}_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  // Import from Excel
+  const importFromExcel = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(firstSheet) as any[];
+
+      const importedItems: ContainerItem[] = jsonData.map((row, index) => ({
+        id: importMode === 'replace' ? index + 1 : Math.max(...containerData.map(i => i.id), 0) + index + 1,
+        referenceCode: row['Reference Code'] || row['Ref'] || '',
+        supplier: row['Supplier'] || '',
+        product: row['Product'] || '',
+        cbm: parseFloat(row['CBM']) || 0,
+        cartons: parseInt(row['Cartons']) || 0,
+        grossWeight: parseFloat(row['Gross Weight']) || 0,
+        productCost: parseFloat(row['Product Cost']) || 0,
+        freightCost: parseFloat(row['Freight Cost']) || 0,
+        client: row['Client'] || '',
+        status: row['Status'] || 'Pending' as ContainerItem['status'],
+        awaiting: row['Awaiting'] || '-',
+      }));
+
+      if (importMode === 'replace') {
+        setContainerData(importedItems);
+      } else {
+        setContainerData([...containerData, ...importedItems]);
+      }
+
+      setShowImportModal(false);
+      if (excelImportRef.current) {
+        excelImportRef.current.value = '';
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   // Calculate summary metrics
   const totalCBM = containerData.reduce((sum, item) => sum + item.cbm, 0);
   const totalCartons = containerData.reduce((sum, item) => sum + item.cartons, 0);
@@ -277,36 +366,56 @@ function App() {
           <p className="text-lg text-gray-300">Logistics Management System</p>
         </div>
           
-        {/* Container Selector */}
-        <div className="flex items-center justify-center gap-4 mb-8">
-          <span className="text-lg font-medium text-gray-300">Select Container</span>
-          <div className="relative" style={{ width: '50%' }}>
+        {/* Container Selector & Action Buttons */}
+        <div className="mb-8">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <span className="text-lg font-medium text-gray-300">Select Container</span>
+            <div className="relative" style={{ width: '50%' }}>
+              <button
+                onClick={() => setShowContainerDropdown(!showContainerDropdown)}
+                className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border-2 border-gray-600 rounded-lg px-6 py-3 flex items-center justify-between hover:border-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                <span className="text-xl font-bold text-blue-400">{selectedContainer}</span>
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              </button>
+              
+              {showContainerDropdown && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl z-10">
+                  {containers.map((container) => (
+                    <button
+                      key={container}
+                      onClick={() => {
+                        setSelectedContainer(container);
+                        setShowContainerDropdown(false);
+                      }}
+                      className={`w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors ${
+                        container === selectedContainer ? 'bg-blue-900/50 font-semibold text-blue-400' : 'text-white'
+                      }`}
+                    >
+                      {container}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Import/Export Buttons */}
+          <div className="flex items-center justify-center gap-4">
             <button
-              onClick={() => setShowContainerDropdown(!showContainerDropdown)}
-              className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border-2 border-gray-600 rounded-lg px-6 py-3 flex items-center justify-between hover:border-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              onClick={exportToExcel}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-green-500/50"
             >
-              <span className="text-xl font-bold text-blue-400">{selectedContainer}</span>
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+              <Download className="w-5 h-5" />
+              Export to Excel
             </button>
-            
-            {showContainerDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl z-10">
-                {containers.map((container) => (
-                  <button
-                    key={container}
-                    onClick={() => {
-                      setSelectedContainer(container);
-                      setShowContainerDropdown(false);
-                    }}
-                    className={`w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors ${
-                      container === selectedContainer ? 'bg-blue-900/50 font-semibold text-blue-400' : 'text-white'
-                    }`}
-                  >
-                    {container}
-                  </button>
-                ))}
-              </div>
-            )}
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/50"
+            >
+              <FileSpreadsheet className="w-5 h-5" />
+              Import from Excel
+            </button>
           </div>
         </div>
 
@@ -362,22 +471,23 @@ function App() {
             <table className="w-full">
               <thead className="bg-gray-900 border-b-2 border-gray-600">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Ref</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Supplier</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Product</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">CBM</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Cartons</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Gross Weight</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Product Cost</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Freight Cost</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Client</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Awaiting</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">PL</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">CI</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">Payment</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">HBL</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider">Certificates</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Ref</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '200px' }}>Supplier</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '180px' }}>Product</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>CBM</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Cartons</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Gross Weight</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Product Cost</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Freight Cost</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '130px' }}>Awaiting</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>PL</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>CI</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Payment</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>HBL</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Certificates</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -444,7 +554,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-sm text-right cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'cbm', item.cbm)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cbm' ? (
@@ -459,7 +569,7 @@ function App() {
                           className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
                         />
                       ) : (
-                        item.cbm.toFixed(2)
+                        <span className="font-semibold text-cyan-400">{item.cbm.toFixed(2)}</span>
                       )}
                     </td>
                     <td 
@@ -579,15 +689,24 @@ function App() {
                       </select>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1">
                         {item.packingList ? (
-                          <button
-                            onClick={() => openPreview(item.packingList!, 'Packing List')}
-                            className="text-blue-400 hover:text-blue-300 transition-colors"
-                            title="View file"
-                          >
-                            <FileText className="w-5 h-5" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => openPreview(item.packingList!, 'Packing List')}
+                              className="text-blue-400 hover:text-blue-300 transition-colors"
+                              title="View file"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteAttachment(item.id, 'packingList')}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                              title="Delete file"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </>
                         ) : null}
                         <input
                           type="file"
@@ -601,20 +720,29 @@ function App() {
                           className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
-                          <Upload className="w-4 h-4" />
+                          <Upload className="w-3 h-3" />
                         </button>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1">
                         {item.commercialInvoice ? (
-                          <button
-                            onClick={() => openPreview(item.commercialInvoice!, 'Commercial Invoice')}
-                            className="text-blue-400 hover:text-blue-300 transition-colors"
-                            title="View file"
-                          >
-                            <FileText className="w-5 h-5" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => openPreview(item.commercialInvoice!, 'Commercial Invoice')}
+                              className="text-blue-400 hover:text-blue-300 transition-colors"
+                              title="View file"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteAttachment(item.id, 'commercialInvoice')}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                              title="Delete file"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </>
                         ) : null}
                         <input
                           type="file"
@@ -628,20 +756,29 @@ function App() {
                           className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
-                          <Upload className="w-4 h-4" />
+                          <Upload className="w-3 h-3" />
                         </button>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1">
                         {item.payment ? (
-                          <button
-                            onClick={() => openPreview(item.payment!, 'Payment')}
-                            className="text-blue-400 hover:text-blue-300 transition-colors"
-                            title="View file"
-                          >
-                            <FileText className="w-5 h-5" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => openPreview(item.payment!, 'Payment')}
+                              className="text-blue-400 hover:text-blue-300 transition-colors"
+                              title="View file"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteAttachment(item.id, 'payment')}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                              title="Delete file"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </>
                         ) : null}
                         <input
                           type="file"
@@ -655,20 +792,29 @@ function App() {
                           className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
-                          <Upload className="w-4 h-4" />
+                          <Upload className="w-3 h-3" />
                         </button>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1">
                         {item.hbl ? (
-                          <button
-                            onClick={() => openPreview(item.hbl!, 'HBL')}
-                            className="text-blue-400 hover:text-blue-300 transition-colors"
-                            title="View file"
-                          >
-                            <FileText className="w-5 h-5" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => openPreview(item.hbl!, 'HBL')}
+                              className="text-blue-400 hover:text-blue-300 transition-colors"
+                              title="View file"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteAttachment(item.id, 'hbl')}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                              title="Delete file"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </>
                         ) : null}
                         <input
                           type="file"
@@ -682,20 +828,29 @@ function App() {
                           className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
-                          <Upload className="w-4 h-4" />
+                          <Upload className="w-3 h-3" />
                         </button>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1">
                         {item.certificates ? (
-                          <button
-                            onClick={() => openPreview(item.certificates!, 'Certificates')}
-                            className="text-blue-400 hover:text-blue-300 transition-colors"
-                            title="View file"
-                          >
-                            <FileText className="w-5 h-5" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => openPreview(item.certificates!, 'Certificates')}
+                              className="text-blue-400 hover:text-blue-300 transition-colors"
+                              title="View file"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteAttachment(item.id, 'certificates')}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                              title="Delete file"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </>
                         ) : null}
                         <input
                           type="file"
@@ -709,9 +864,18 @@ function App() {
                           className="text-gray-500 hover:text-blue-400 transition-colors"
                           title="Upload file"
                         >
-                          <Upload className="w-4 h-4" />
+                          <Upload className="w-3 h-3" />
                         </button>
                       </div>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <button
+                        onClick={() => deleteRow(item.id)}
+                        className="text-red-400 hover:text-red-300 transition-colors transform hover:scale-110"
+                        title="Delete row"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -775,6 +939,88 @@ function App() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-2xl w-full max-w-md border-2 border-gray-600">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+              <div className="flex items-center gap-3">
+                <FileSpreadsheet className="w-6 h-6 text-blue-400" />
+                <h3 className="text-xl font-semibold text-white">Import from Excel</h3>
+              </div>
+              <button
+                onClick={() => setShowImportModal(false)}
+                className="text-gray-400 hover:text-gray-200 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">
+                  Import Mode
+                </label>
+                <div className="space-y-3">
+                  <label className="flex items-center p-3 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+                    <input
+                      type="radio"
+                      name="importMode"
+                      value="add"
+                      checked={importMode === 'add'}
+                      onChange={(e) => setImportMode(e.target.value as 'add')}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <div className="ml-3">
+                      <div className="text-white font-medium">Add to existing data</div>
+                      <div className="text-sm text-gray-400">Append imported rows to current data</div>
+                    </div>
+                  </label>
+                  <label className="flex items-center p-3 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+                    <input
+                      type="radio"
+                      name="importMode"
+                      value="replace"
+                      checked={importMode === 'replace'}
+                      onChange={(e) => setImportMode(e.target.value as 'replace')}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <div className="ml-3">
+                      <div className="text-white font-medium">Replace all data</div>
+                      <div className="text-sm text-gray-400">Clear existing data and import new</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <input
+                  type="file"
+                  ref={excelImportRef}
+                  onChange={importFromExcel}
+                  accept=".xlsx,.xls"
+                  className="hidden"
+                />
+                <button
+                  onClick={() => excelImportRef.current?.click()}
+                  className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  <Upload className="w-5 h-5" />
+                  Select Excel File
+                </button>
+              </div>
+
+              <div className="text-sm text-gray-400 bg-gray-700/30 p-4 rounded-lg">
+                <p className="font-semibold text-gray-300 mb-2">Expected columns:</p>
+                <p className="text-xs">Reference Code, Supplier, Product, CBM, Cartons, Gross Weight, Product Cost, Freight Cost, Client, Status, Awaiting</p>
+              </div>
             </div>
           </div>
         </div>
