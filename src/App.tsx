@@ -42,6 +42,7 @@ function App() {
   });
   const [showAddContainer, setShowAddContainer] = useState(false);
   const [newContainerName, setNewContainerName] = useState('');
+  const [showSaveNotification, setShowSaveNotification] = useState(false);
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const excelImportRef = useRef<HTMLInputElement>(null);
 
@@ -191,12 +192,10 @@ function App() {
 
   // Load data from localStorage on mount and when container changes
   useEffect(() => {
-    console.log('🔄 Switching to container:', selectedContainer);
     const savedData = localStorage.getItem(`container_${selectedContainer}`);
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        console.log('📁 Loaded saved data for', selectedContainer, ':', parsed.length, 'items');
         setContainerData(parsed);
       } catch (error) {
         console.error('Failed to load saved data:', error);
@@ -206,11 +205,9 @@ function App() {
     } else {
       // No saved data - check if this is the default container (I110.11)
       if (selectedContainer === 'I110.11') {
-        console.log('🎯 Loading initial demo data for', selectedContainer);
         setContainerData(initialData);
       } else {
         // For new containers, start with empty data
-        console.log('🆕 Starting with empty data for new container:', selectedContainer);
         setContainerData([]);
       }
     }
@@ -221,6 +218,14 @@ function App() {
   useEffect(() => {
     if (containerData.length > 0) {
       localStorage.setItem(`container_${selectedContainer}`, JSON.stringify(containerData));
+      
+      // Show save notification briefly
+      setShowSaveNotification(true);
+      const timer = setTimeout(() => {
+        setShowSaveNotification(false);
+      }, 2000); // Hide after 2 seconds
+      
+      return () => clearTimeout(timer);
     }
   }, [containerData, selectedContainer]);
 
@@ -510,7 +515,6 @@ function App() {
                     <button
                       key={container}
                       onClick={() => {
-                        console.log('🖱️ Clicked container:', container);
                         setSelectedContainer(container);
                         setShowContainerDropdown(false);
                       }}
@@ -1365,6 +1369,16 @@ function App() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Auto-save Notification */}
+      {showSaveNotification && (
+        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300">
+          <div className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium">💾 Auto-saved to browser</span>
           </div>
         </div>
       )}
