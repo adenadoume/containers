@@ -35,6 +35,11 @@ function App() {
   const [editValue, setEditValue] = useState<string>('');
   const [showImportModal, setShowImportModal] = useState(false);
   const [importMode, setImportMode] = useState<'replace' | 'add'>('add');
+  const [previewModal, setPreviewModal] = useState<{ show: boolean; file: File | string | null; name: string }>({
+    show: false,
+    file: null,
+    name: ''
+  });
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const excelImportRef = useRef<HTMLInputElement>(null);
 
@@ -258,12 +263,21 @@ function App() {
     const file = event.target.files?.[0];
     if (!file) return;
     
-    // In a real app, you'd upload to a server. For demo, we'll create a local URL
+    // Store the file object for preview
     const fileUrl = URL.createObjectURL(file);
     
     setContainerData(containerData.map(item => 
       item.id === id ? { ...item, [field]: fileUrl } : item
     ));
+  };
+
+  // Handle file preview
+  const handleFilePreview = (fileUrl: string, fileName: string) => {
+    setPreviewModal({
+      show: true,
+      file: fileUrl,
+      name: fileName
+    });
   };
 
   // Delete row
@@ -738,7 +752,7 @@ function App() {
                         {item.packingList ? (
                           <>
                             <button
-                              onClick={() => openPreview(item.packingList!, 'Packing List')}
+                              onClick={() => handleFilePreview(item.packingList!, 'Packing List')}
                               className="text-blue-400 hover:text-blue-300 transition-colors"
                               title="View file"
                             >
@@ -774,7 +788,7 @@ function App() {
                         {item.commercialInvoice ? (
                           <>
                             <button
-                              onClick={() => openPreview(item.commercialInvoice!, 'Commercial Invoice')}
+                              onClick={() => handleFilePreview(item.commercialInvoice!, 'Commercial Invoice')}
                               className="text-blue-400 hover:text-blue-300 transition-colors"
                               title="View file"
                             >
@@ -810,7 +824,7 @@ function App() {
                         {item.payment ? (
                           <>
                             <button
-                              onClick={() => openPreview(item.payment!, 'Payment')}
+                              onClick={() => handleFilePreview(item.payment!, 'Payment')}
                               className="text-blue-400 hover:text-blue-300 transition-colors"
                               title="View file"
                             >
@@ -846,7 +860,7 @@ function App() {
                         {item.hbl ? (
                           <>
                             <button
-                              onClick={() => openPreview(item.hbl!, 'HBL')}
+                              onClick={() => handleFilePreview(item.hbl!, 'HBL')}
                               className="text-blue-400 hover:text-blue-300 transition-colors"
                               title="View file"
                             >
@@ -882,7 +896,7 @@ function App() {
                         {item.certificates ? (
                           <>
                             <button
-                              onClick={() => openPreview(item.certificates!, 'Certificates')}
+                              onClick={() => handleFilePreview(item.certificates!, 'Certificates')}
                               className="text-blue-400 hover:text-blue-300 transition-colors"
                               title="View file"
                             >
@@ -1065,6 +1079,124 @@ function App() {
               <div className="text-sm text-gray-400 bg-gray-700/30 p-4 rounded-lg">
                 <p className="font-semibold text-gray-300 mb-2">Expected columns:</p>
                 <p className="text-xs">Reference Code, Supplier, Product, CBM, Cartons, Gross Weight, Product Cost, Freight Cost, Client, Status, Awaiting</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Light File Preview Modal */}
+      {previewModal.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">
+                📄 {previewModal.name}
+              </h3>
+              <button
+                onClick={() => setPreviewModal({ show: false, file: null, name: '' })}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            {/* Preview Content */}
+            <div className="flex-1 p-4 overflow-hidden">
+              {previewModal.file && (
+                <div className="w-full h-full">
+                  {previewModal.name.toLowerCase().includes('pdf') || 
+                   (typeof previewModal.file === 'string' && previewModal.file.includes('.pdf')) ? (
+                    // PDF Preview
+                    <iframe
+                      src={previewModal.file}
+                      className="w-full h-full border-0 rounded"
+                      title={`Preview of ${previewModal.name}`}
+                    />
+                  ) : previewModal.name.toLowerCase().includes('excel') || 
+                    previewModal.name.toLowerCase().includes('xlsx') || 
+                    previewModal.name.toLowerCase().includes('xls') ||
+                    (typeof previewModal.file === 'string' && 
+                     (previewModal.file.includes('.xlsx') || previewModal.file.includes('.xls'))) ? (
+                    // Excel Preview (fallback to download link)
+                    <div className="flex flex-col items-center justify-center h-full text-center">
+                      <FileSpreadsheet className="w-16 h-16 text-green-500 mb-4" />
+                      <h4 className="text-xl font-semibold text-gray-900 mb-2">Excel File</h4>
+                      <p className="text-gray-600 mb-4">Excel files cannot be previewed in browser</p>
+                      <a
+                        href={previewModal.file}
+                        download={previewModal.name}
+                        className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors"
+                      >
+                        📥 Download File
+                      </a>
+                    </div>
+                  ) : previewModal.name.toLowerCase().includes('word') || 
+                    previewModal.name.toLowerCase().includes('docx') || 
+                    previewModal.name.toLowerCase().includes('doc') ||
+                    (typeof previewModal.file === 'string' && 
+                     (previewModal.file.includes('.docx') || previewModal.file.includes('.doc'))) ? (
+                    // Word Preview (fallback to download link)
+                    <div className="flex flex-col items-center justify-center h-full text-center">
+                      <FileText className="w-16 h-16 text-blue-500 mb-4" />
+                      <h4 className="text-xl font-semibold text-gray-900 mb-2">Word Document</h4>
+                      <p className="text-gray-600 mb-4">Word documents cannot be previewed in browser</p>
+                      <a
+                        href={previewModal.file}
+                        download={previewModal.name}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
+                      >
+                        📥 Download File
+                      </a>
+                    </div>
+                  ) : previewModal.name.toLowerCase().includes('image') || 
+                    previewModal.name.toLowerCase().includes('jpg') || 
+                    previewModal.name.toLowerCase().includes('jpeg') || 
+                    previewModal.name.toLowerCase().includes('png') || 
+                    previewModal.name.toLowerCase().includes('gif') ||
+                    (typeof previewModal.file === 'string' && 
+                     (previewModal.file.includes('.jpg') || previewModal.file.includes('.jpeg') || 
+                      previewModal.file.includes('.png') || previewModal.file.includes('.gif'))) ? (
+                    // Image Preview
+                    <div className="flex items-center justify-center h-full">
+                      <img
+                        src={previewModal.file}
+                        alt={`Preview of ${previewModal.name}`}
+                        className="max-w-full max-h-full object-contain rounded"
+                      />
+                    </div>
+                  ) : (
+                    // Generic file preview
+                    <div className="flex flex-col items-center justify-center h-full text-center">
+                      <File className="w-16 h-16 text-gray-500 mb-4" />
+                      <h4 className="text-xl font-semibold text-gray-900 mb-2">{previewModal.name}</h4>
+                      <p className="text-gray-600 mb-4">File preview not available</p>
+                      <a
+                        href={previewModal.file}
+                        download={previewModal.name}
+                        className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
+                      >
+                        📥 Download File
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {/* Footer */}
+            <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-500">
+                  💡 Tip: PDF files can be viewed directly. Other files can be downloaded.
+                </div>
+                <button
+                  onClick={() => setPreviewModal({ show: false, file: null, name: '' })}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
