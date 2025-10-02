@@ -615,8 +615,8 @@ function App() {
             <table className="w-full">
               <thead className="bg-gray-900 border-b-2 border-gray-600">
                 <tr>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Ref</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '200px' }}>Supplier</th>
+                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Code</th>
+                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '280px' }}>Supplier</th>
                   <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '180px' }}>Product</th>
                   <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>CBM</th>
                   <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Cartons</th>
