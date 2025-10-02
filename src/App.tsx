@@ -191,19 +191,28 @@ function App() {
 
   // Load data from localStorage on mount and when container changes
   useEffect(() => {
+    console.log('🔄 Switching to container:', selectedContainer);
     const savedData = localStorage.getItem(`container_${selectedContainer}`);
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
+        console.log('📁 Loaded saved data for', selectedContainer, ':', parsed.length, 'items');
         setContainerData(parsed);
       } catch (error) {
         console.error('Failed to load saved data:', error);
-        // If parsing fails, use initial data
-        setContainerData(initialData);
+        // If parsing fails, start with empty data
+        setContainerData([]);
       }
     } else {
-      // No saved data, use initial data for demo purposes
-      setContainerData(initialData);
+      // No saved data - check if this is the default container (I110.11)
+      if (selectedContainer === 'I110.11') {
+        console.log('🎯 Loading initial demo data for', selectedContainer);
+        setContainerData(initialData);
+      } else {
+        // For new containers, start with empty data
+        console.log('🆕 Starting with empty data for new container:', selectedContainer);
+        setContainerData([]);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedContainer]);
@@ -501,6 +510,7 @@ function App() {
                     <button
                       key={container}
                       onClick={() => {
+                        console.log('🖱️ Clicked container:', container);
                         setSelectedContainer(container);
                         setShowContainerDropdown(false);
                       }}
