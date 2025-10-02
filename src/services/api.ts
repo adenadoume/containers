@@ -1,7 +1,7 @@
 // Frontend API Service
 // src/services/api.ts
 
-const API_BASE_URL = process.env.VITE_API_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 export interface ContainerItem {
   id: number;
