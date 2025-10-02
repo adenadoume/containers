@@ -15,11 +15,11 @@ interface ContainerItem {
   client: string;
   status: 'Ready to Ship' | 'Awaiting Supplier' | 'Need Payment' | 'Pending';
   awaiting: string;
-  packingList?: string;
-  commercialInvoice?: string;
-  payment?: string;
-  hbl?: string;
-  certificates?: string;
+  packingList?: string | { url: string; name: string };
+  commercialInvoice?: string | { url: string; name: string };
+  payment?: string | { url: string; name: string };
+  hbl?: string | { url: string; name: string };
+  certificates?: string | { url: string; name: string };
 }
 
 type EditingCell = {
@@ -59,8 +59,8 @@ function App() {
       client: 'Pitoulis AE',
       status: 'Ready to Ship',
       awaiting: '-',
-      packingList: '/miktoyear.xlsx',
-      commercialInvoice: '/miktoyear.xlsx',
+      packingList: { url: '/miktoyear.xlsx', name: 'Packing_List_I112.xlsx' },
+      commercialInvoice: { url: '/miktoyear.xlsx', name: 'Commercial_Invoice_I112.pdf' },
     },
     {
       id: 2,
@@ -75,7 +75,7 @@ function App() {
       client: 'Alpha Max Holdings',
       status: 'Ready to Ship',
       awaiting: '-',
-      commercialInvoice: '/miktoyear.xlsx',
+      commercialInvoice: { url: '/miktoyear.xlsx', name: 'Commercial_Invoice_I248.pdf' },
     },
     {
       id: 3,
@@ -90,7 +90,7 @@ function App() {
       client: 'Tzimas Constructions',
       status: 'Awaiting Supplier',
       awaiting: 'Payment',
-      hbl: '/miktoyear.xlsx',
+      hbl: { url: '/miktoyear.xlsx', name: 'HBL_I258.pdf' },
     },
     {
       id: 4,
@@ -105,8 +105,8 @@ function App() {
       client: 'Frank Wilemsen',
       status: 'Ready to Ship',
       awaiting: 'Certificates',
-      packingList: '/miktoyear.xlsx',
-      certificates: '/miktoyear.xlsx',
+      packingList: { url: '/miktoyear.xlsx', name: 'Packing_List_I107.xlsx' },
+      certificates: { url: '/miktoyear.xlsx', name: 'Quality_Certificates_I107.pdf' },
     },
     {
       id: 5,
@@ -121,7 +121,7 @@ function App() {
       client: 'Lodora Residences',
       status: 'Ready to Ship',
       awaiting: '-',
-      payment: '/miktoyear.xlsx',
+      payment: { url: '/miktoyear.xlsx', name: 'Payment_Receipt_I165.pdf' },
     },
     {
       id: 6,
@@ -263,21 +263,29 @@ function App() {
     const file = event.target.files?.[0];
     if (!file) return;
     
-    // Store the file object for preview
+    // Store the file object for preview with original name
     const fileUrl = URL.createObjectURL(file);
     
     setContainerData(containerData.map(item => 
-      item.id === id ? { ...item, [field]: fileUrl } : item
+      item.id === id ? { ...item, [field]: { url: fileUrl, name: file.name } } : item
     ));
   };
 
   // Handle file preview
-  const handleFilePreview = (fileUrl: string, fileName: string) => {
-    setPreviewModal({
-      show: true,
-      file: fileUrl,
-      name: fileName
-    });
+  const handleFilePreview = (fileData: string | { url: string; name: string }, fileName?: string) => {
+    if (typeof fileData === 'string') {
+      setPreviewModal({
+        show: true,
+        file: fileData,
+        name: fileName || 'File'
+      });
+    } else {
+      setPreviewModal({
+        show: true,
+        file: fileData.url,
+        name: fileData.name
+      });
+    }
   };
 
   // Delete row
@@ -1129,7 +1137,7 @@ function App() {
                         download={previewModal.name}
                         className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors"
                       >
-                        📥 Download File
+                        📥 Download {previewModal.name}
                       </a>
                     </div>
                   ) : previewModal.name.toLowerCase().includes('word') || 
@@ -1147,7 +1155,7 @@ function App() {
                         download={previewModal.name}
                         className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
                       >
-                        📥 Download File
+                        📥 Download {previewModal.name}
                       </a>
                     </div>
                   ) : previewModal.name.toLowerCase().includes('image') || 
@@ -1177,7 +1185,7 @@ function App() {
                         download={previewModal.name}
                         className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
                       >
-                        📥 Download File
+                        📥 Download {previewModal.name}
                       </a>
                     </div>
                   )}
