@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, FileText, Eye, Plus, X, Upload, Trash2, Download, FileSpreadsheet } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
@@ -162,7 +162,33 @@ function App() {
     },
   ];
 
-  const [containerData, setContainerData] = useState<ContainerItem[]>(initialData);
+  const [containerData, setContainerData] = useState<ContainerItem[]>([]);
+
+  // Load data from localStorage on mount and when container changes
+  useEffect(() => {
+    const savedData = localStorage.getItem(`container_${selectedContainer}`);
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setContainerData(parsed);
+      } catch (error) {
+        console.error('Failed to load saved data:', error);
+        // If parsing fails, use initial data
+        setContainerData(initialData);
+      }
+    } else {
+      // No saved data, use initial data for demo purposes
+      setContainerData(initialData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedContainer]);
+
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    if (containerData.length > 0) {
+      localStorage.setItem(`container_${selectedContainer}`, JSON.stringify(containerData));
+    }
+  }, [containerData, selectedContainer]);
 
   // Add new row
   const addNewRow = () => {
@@ -379,6 +405,7 @@ function App() {
         <div className="mb-6 text-center animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Container Planning</h1>
           <p className="text-lg text-gray-300">Logistics Management System</p>
+          <p className="text-xs text-green-400 mt-1">✓ Auto-saving to your browser</p>
         </div>
           
         {/* Container Selector & Action Buttons */}
