@@ -242,16 +242,31 @@ function App() {
 
   // Delete row
   const deleteRow = (id: number) => {
-    if (confirm('Are you sure you want to delete this item?')) {
+    const item = containerData.find(i => i.id === id);
+    const itemDescription = item?.product || item?.supplier || 'this item';
+    
+    if (window.confirm(`⚠️ Delete Item?\n\nAre you sure you want to delete "${itemDescription}"?\n\nThis action cannot be undone.`)) {
       setContainerData(containerData.filter(item => item.id !== id));
     }
   };
 
   // Delete attachment
   const deleteAttachment = (id: number, field: keyof ContainerItem) => {
-    setContainerData(containerData.map(item => 
-      item.id === id ? { ...item, [field]: undefined } : item
-    ));
+    const fieldNames: Record<string, string> = {
+      packingList: 'Packing List',
+      commercialInvoice: 'Commercial Invoice',
+      payment: 'Payment',
+      hbl: 'HBL',
+      certificates: 'Certificates'
+    };
+    
+    const fieldName = fieldNames[field] || 'attachment';
+    
+    if (window.confirm(`🗑️ Delete ${fieldName}?\n\nAre you sure you want to delete this ${fieldName.toLowerCase()}?`)) {
+      setContainerData(containerData.map(item => 
+        item.id === id ? { ...item, [field]: undefined } : item
+      ));
+    }
   };
 
   // Export to Excel
@@ -452,16 +467,16 @@ function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 animate-slide-up">
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 border border-gray-700">
-            <div className="text-sm text-gray-300 font-semibold mb-2">Product cost</div>
-            <div className="text-3xl font-bold text-green-400">${totalProductCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}</div>
+            <div className="text-sm text-white mb-2">Product cost</div>
+            <div className="text-4xl font-bold text-green-400">${Math.round(totalProductCost).toLocaleString('en-US')}</div>
           </div>
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/30 border border-gray-700">
-            <div className="text-sm text-gray-300 font-semibold mb-2">Freight cost to forwarder</div>
-            <div className="text-3xl font-bold text-pink-400">${totalFreightCost.toLocaleString('en-US')}</div>
+            <div className="text-sm text-white mb-2">Freight cost to forwarder</div>
+            <div className="text-4xl font-bold text-pink-400">${Math.round(totalFreightCost).toLocaleString('en-US')}</div>
           </div>
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/30 border border-gray-700">
-            <div className="text-sm text-gray-300 font-semibold mb-2">Total product cost</div>
-            <div className="text-3xl font-bold text-cyan-400">${totalCost.toLocaleString('en-US', { minimumFractionDigits: 1 })}</div>
+            <div className="text-sm text-white mb-2">Total product cost</div>
+            <div className="text-4xl font-bold text-cyan-400">${Math.round(totalCost).toLocaleString('en-US')}</div>
           </div>
         </div>
 
