@@ -370,12 +370,6 @@ function App() {
     ));
   };
 
-  // Update awaiting field
-  const updateAwaiting = (id: number, awaiting: string) => {
-    setContainerData(containerData.map(item => 
-      item.id === id ? { ...item, awaiting } : item
-    ));
-  };
 
   // Handle file upload
   const handleFileUpload = (id: number, field: keyof ContainerItem, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1496,8 +1490,8 @@ function App() {
                       >
                         📥 Download {previewModal.name}
                       </a>
-                    </div>
-                  )}
+            </div>
+          )}
                 </div>
               )}
             </div>
