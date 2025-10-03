@@ -12,9 +12,11 @@ interface ContainerItem {
   grossWeight: number;
   productCost: number;
   freightCost: number;
-  client: string;
   status: 'Ready to Ship' | 'Awaiting Supplier' | 'Need Payment' | 'Pending';
-  awaiting: string;
+  awaiting: string[];
+  productionDays: number;
+  productionReady: string;
+  client: string;
   packingList?: string | { url: string; name: string };
   commercialInvoice?: string | { url: string; name: string };
   payment?: string | { url: string; name: string };
@@ -91,9 +93,11 @@ function App() {
       grossWeight: 292701,
       productCost: 6266.9,
       freightCost: 0,
-      client: 'Pitoulis AE',
       status: 'Ready to Ship',
-      awaiting: '-',
+      awaiting: ['-'],
+      productionDays: 15,
+      productionReady: '2024-02-15',
+      client: 'Pitoulis AE',
       packingList: { url: '/miktoyear.xlsx', name: 'Packing_List_I112.xlsx' },
       commercialInvoice: { url: '/miktoyear.xlsx', name: 'Commercial_Invoice_I112.pdf' },
     },
@@ -107,9 +111,11 @@ function App() {
       grossWeight: 1261,
       productCost: 7138.0,
       freightCost: 450,
-      client: 'Alpha Max Holdings',
       status: 'Ready to Ship',
-      awaiting: '-',
+      awaiting: ['-'],
+      productionDays: 20,
+      productionReady: '2024-02-20',
+      client: 'Alpha Max Holdings',
       commercialInvoice: { url: '/miktoyear.xlsx', name: 'Commercial_Invoice_I248.pdf' },
     },
     {
@@ -122,9 +128,11 @@ function App() {
       grossWeight: 0,
       productCost: 12110.0,
       freightCost: 800,
-      client: 'Tzimas Constructions',
       status: 'Awaiting Supplier',
-      awaiting: 'Payment',
+      awaiting: ['Payment'],
+      productionDays: 30,
+      productionReady: '2024-03-01',
+      client: 'Tzimas Constructions',
       hbl: { url: '/miktoyear.xlsx', name: 'HBL_I258.pdf' },
     },
     {
@@ -137,9 +145,11 @@ function App() {
       grossWeight: 840,
       productCost: 9495.5,
       freightCost: 350,
-      client: 'Frank Wilemsen',
       status: 'Ready to Ship',
-      awaiting: 'Certificates',
+      awaiting: ['Certificates'],
+      productionDays: 25,
+      productionReady: '2024-02-25',
+      client: 'Frank Wilemsen',
       packingList: { url: '/miktoyear.xlsx', name: 'Packing_List_I107.xlsx' },
       certificates: { url: '/miktoyear.xlsx', name: 'Quality_Certificates_I107.pdf' },
     },
@@ -153,9 +163,11 @@ function App() {
       grossWeight: 1133,
       productCost: 14867.2,
       freightCost: 420,
-      client: 'Lodora Residences',
       status: 'Ready to Ship',
-      awaiting: '-',
+      awaiting: ['-'],
+      productionDays: 18,
+      productionReady: '2024-02-18',
+      client: 'Lodora Residences',
       payment: { url: '/miktoyear.xlsx', name: 'Payment_Receipt_I165.pdf' },
     },
     {
@@ -168,9 +180,11 @@ function App() {
       grossWeight: 745,
       productCost: 593.0,
       freightCost: 50,
-      client: 'Esso Mandel AE',
       status: 'Ready to Ship',
-      awaiting: '-',
+      awaiting: ['-'],
+      productionDays: 12,
+      productionReady: '2024-02-12',
+      client: 'Esso Mandel AE',
     },
     {
       id: 7,
@@ -182,9 +196,11 @@ function App() {
       grossWeight: 150,
       productCost: 1250.0,
       freightCost: 100,
-      client: 'Spijkers',
       status: 'Ready to Ship',
-      awaiting: '-',
+      awaiting: ['-'],
+      productionDays: 8,
+      productionReady: '2024-02-08',
+      client: 'Spijkers',
     },
     {
       id: 8,
@@ -196,9 +212,11 @@ function App() {
       grossWeight: 0,
       productCost: 2150.0,
       freightCost: 0,
-      client: 'Medlicott IKE',
       status: 'Need Payment',
-      awaiting: 'Payment',
+      awaiting: ['Payment'],
+      productionDays: 22,
+      productionReady: '2024-02-22',
+      client: 'Medlicott IKE',
     },
   ];
 
@@ -274,9 +292,11 @@ function App() {
       grossWeight: 0,
       productCost: 0,
       freightCost: 0,
-      client: '',
       status: 'Pending',
-      awaiting: '-',
+      awaiting: ['-'],
+      productionDays: 0,
+      productionReady: '',
+      client: '',
     };
     setContainerData([...containerData, newItem]);
   };
@@ -719,9 +739,11 @@ function App() {
                   <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Gross Weight</th>
                   <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Product Cost</th>
                   <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Freight Cost</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
                   <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '130px' }}>Awaiting</th>
+                  <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Production Days</th>
+                  <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Production Ready</th>
+                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
+                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>PL</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>CI</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Payment</th>
