@@ -30,7 +30,7 @@ type EditingCell = {
 } | null;
 
 function App() {
-  const [selectedContainer, setSelectedContainer] = useState('I110 SOUTH');
+  const [selectedContainer, setSelectedContainer] = useState('I110.11 SOUTH');
   const [showContainerDropdown, setShowContainerDropdown] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ type: string; url: string; name: string } | null>(null);
   const [editingCell, setEditingCell] = useState<EditingCell>(null);
@@ -44,11 +44,12 @@ function App() {
   });
   const [showAddContainer, setShowAddContainer] = useState(false);
   const [newContainerName, setNewContainerName] = useState('');
+  const containerDropdownRef = useRef<HTMLDivElement>(null);
   const [showSaveNotification, setShowSaveNotification] = useState(false);
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const excelImportRef = useRef<HTMLInputElement>(null);
 
-  const [containers, setContainers] = useState(['I110 SOUTH', 'I110.12 NORTH', 'I269.1', 'I269.2']);
+  const [containers, setContainers] = useState(['I110.11 SOUTH', 'I110.12 NORTH', 'I269.1', 'I269.2']);
 
   // Initialize container from URL on mount
   useEffect(() => {
@@ -81,6 +82,20 @@ function App() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [containers]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerDropdownRef.current && !containerDropdownRef.current.contains(event.target as Node)) {
+        setShowContainerDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const initialData: ContainerItem[] = [
     {
@@ -253,8 +268,8 @@ function App() {
         setContainerData([]);
       }
     } else {
-      // No saved data - check if this is the default container (I110 SOUTH)
-      if (selectedContainer === 'I110 SOUTH') {
+      // No saved data - check if this is the default container (I110.11 SOUTH)
+      if (selectedContainer === 'I110.11 SOUTH') {
         setContainerData(initialData);
       } else {
         // For new containers, start with empty data
@@ -331,8 +346,6 @@ function App() {
         // Convert to appropriate type
         if (['cbm', 'cartons', 'grossWeight', 'productCost', 'freightCost'].includes(field as string)) {
           value = parseFloat(editValue) || 0;
-        } else if (field === 'awaiting') {
-          value = [editValue || '-'];
         }
         
         return { ...item, [field]: value };
@@ -622,7 +635,7 @@ function App() {
         <div className="mb-8">
           <div className="flex items-center justify-center gap-4 mb-4">
             <span className="text-lg font-medium text-gray-300">Select Container</span>
-            <div className="relative" style={{ width: '50%' }}>
+            <div className="relative" style={{ width: '50%' }} ref={containerDropdownRef}>
           <button
                 onClick={() => setShowContainerDropdown(!showContainerDropdown)}
                 className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border-2 border-gray-600 rounded-lg px-6 py-3 flex items-center justify-between hover:border-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
@@ -748,8 +761,8 @@ function App() {
                   <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '130px' }}>Awaiting</th>
                   <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Production Days</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Production Ready</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
                   <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
+                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>PL</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>CI</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Payment</th>
@@ -916,23 +929,26 @@ function App() {
                         `$${Math.round(item.freightCost).toLocaleString('en-US')}`
                       )}
                     </td>
-                    <td 
-                      className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
-                      onClick={() => startEditing(item.id, 'awaiting', item.awaiting[0] || '-')}
-                    >
-                      {editingCell?.id === item.id && editingCell?.field === 'awaiting' ? (
-                        <input
-                          type="text"
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          onBlur={saveEdit}
-                          onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
-                          autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
-                        />
-                      ) : (
-                        item.awaiting[0] || <span className="text-gray-400">Click to edit</span>
-                      )}
+                    <td className="px-4 py-3">
+                      <select 
+                        multiple
+                        value={item.awaiting}
+                        onChange={(e) => {
+                          const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                          setContainerData(containerData.map(dataItem => 
+                            dataItem.id === item.id ? { ...dataItem, awaiting: selectedOptions } : dataItem
+                          ));
+                        }}
+                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[40px]"
+                        size={Math.min(item.awaiting.length + 1, 4)}
+                      >
+                        <option value="Payment">Payment</option>
+                        <option value="Certificates">Certificates</option>
+                        <option value="Documents">Documents</option>
+                        <option value="Inspection">Inspection</option>
+                        <option value="Customs">Customs</option>
+                        <option value="Shipping">Shipping</option>
+                      </select>
                     </td>
                     <td 
                       className="px-4 py-3 text-base text-right text-white cursor-pointer hover:bg-blue-900/30"
