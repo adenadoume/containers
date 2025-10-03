@@ -459,12 +459,35 @@ function App() {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, selectedContainer);
     
+    // Set zoom to 150%
+    worksheet['!zoom'] = { scale: 150 };
+    
     // Auto-size columns
     const maxWidth = 50;
     const colWidths = Object.keys(exportData[0] || {}).map(key => ({
       wch: Math.min(maxWidth, Math.max(key.length, ...exportData.map(row => String(row[key as keyof typeof row]).length)))
     }));
     worksheet['!cols'] = colWidths;
+    
+    // Add alternating row colors (light blue for even rows)
+    const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1');
+    for (let row = range.s.r; row <= range.e.r; row++) {
+      for (let col = range.s.c; col <= range.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+        if (!worksheet[cellAddress]) continue;
+        
+        // Apply light blue background to even rows (excluding header row)
+        if (row > 0 && row % 2 === 0) {
+          if (!worksheet[cellAddress].s) worksheet[cellAddress].s = {};
+          worksheet[cellAddress].s = {
+            ...worksheet[cellAddress].s,
+            fill: {
+              fgColor: { rgb: "ADD8E6" } // Light blue color
+            }
+          };
+        }
+      }
+    }
     
     // Create a zip file with Excel and attachments
     const JSZip = (await import('jszip')).default;
