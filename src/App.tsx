@@ -396,8 +396,8 @@ function App() {
     }
   };
 
-  // Export to Excel
-  const exportToExcel = () => {
+  // Export to Excel with attachments
+  const exportToExcel = async () => {
     const exportData = containerData.map(item => ({
       'Reference Code': item.referenceCode,
       'Supplier': item.supplier,
@@ -423,7 +423,98 @@ function App() {
     }));
     worksheet['!cols'] = colWidths;
     
-    XLSX.writeFile(workbook, `Container_${selectedContainer}_${new Date().toISOString().split('T')[0]}.xlsx`);
+    // Create a zip file with Excel and attachments
+    const JSZip = (await import('jszip')).default;
+    const zip = new JSZip();
+    
+    // Add Excel file to zip
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    zip.file(`Container_${selectedContainer}_${new Date().toISOString().split('T')[0]}.xlsx`, excelBuffer);
+    
+    // Add attachments organized by reference code
+    for (const item of containerData) {
+      if (item.referenceCode) {
+        const folderName = item.referenceCode.replace(/[^a-zA-Z0-9]/g, '_');
+        const folder = zip.folder(folderName);
+        
+        // Add each attachment if it exists
+        const attachments = [
+          { field: 'packingList', name: 'Packing_List' },
+          { field: 'commercialInvoice', name: 'Commercial_Invoice' },
+          { field: 'payment', name: 'Payment' },
+          { field: 'hbl', name: 'HBL' },
+          { field: 'certificates', name: 'Certificates' }
+        ];
+        
+        for (const attachment of attachments) {
+          const fileData = item[attachment.field as keyof ContainerItem];
+          if (fileData) {
+            let fileName = '';
+            let fileContent: string | ArrayBuffer = '';
+            
+            if (typeof fileData === 'string') {
+              // Handle blob URLs
+              if (fileData.startsWith('blob:')) {
+                try {
+                  const response = await fetch(fileData);
+                  const blob = await response.blob();
+                  fileContent = await blob.arrayBuffer();
+                  fileName = `${attachment.name}.${getFileExtension(blob.type)}`;
+                } catch (error) {
+                  console.warn(`Could not fetch ${attachment.field} for ${item.referenceCode}:`, error);
+                  continue;
+                }
+              } else {
+                // Handle file paths (for demo data)
+                fileName = `${attachment.name}.pdf`;
+                fileContent = ''; // Skip demo files
+              }
+            } else if (fileData && typeof fileData === 'object' && 'url' in fileData) {
+              // Handle file objects with url and name
+              try {
+                const response = await fetch(fileData.url);
+                const blob = await response.blob();
+                fileContent = await blob.arrayBuffer();
+                fileName = fileData.name || `${attachment.name}.${getFileExtension(blob.type)}`;
+              } catch (error) {
+                console.warn(`Could not fetch ${attachment.field} for ${item.referenceCode}:`, error);
+                continue;
+              }
+            }
+            
+            if (fileContent && fileName) {
+              folder?.file(fileName, fileContent);
+            }
+          }
+        }
+      }
+    }
+    
+    // Generate and download zip file
+    const zipBuffer = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(zipBuffer);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Container_${selectedContainer}_with_attachments.zip`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Helper function to get file extension from MIME type
+  const getFileExtension = (mimeType: string): string => {
+    const extensions: { [key: string]: string } = {
+      'application/pdf': 'pdf',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+      'application/vnd.ms-excel': 'xls',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+      'application/msword': 'doc',
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/gif': 'gif'
+    };
+    return extensions[mimeType] || 'bin';
   };
 
   // Import from Excel
@@ -1181,7 +1272,7 @@ function App() {
       {/* New Light File Preview Modal */}
       {previewModal.show && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+          <div className="bg-white rounded-lg shadow-2xl max-w-5xl w-full max-h-[95vh] flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">
