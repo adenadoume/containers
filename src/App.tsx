@@ -527,24 +527,24 @@ function App() {
           <p className="text-lg text-gray-300">Logistics Management System</p>
           <p className="text-xs text-green-400 mt-1">✓ Auto-saving to your browser</p>
         </div>
-          
+
         {/* Container Selector & Action Buttons */}
         <div className="mb-8">
           <div className="flex items-center justify-center gap-4 mb-4">
             <span className="text-lg font-medium text-gray-300">Select Container</span>
             <div className="relative" style={{ width: '50%' }}>
-              <button
+          <button
                 onClick={() => setShowContainerDropdown(!showContainerDropdown)}
                 className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border-2 border-gray-600 rounded-lg px-6 py-3 flex items-center justify-between hover:border-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 <span className="text-xl font-bold text-blue-400">{selectedContainer}</span>
                 <ChevronDown className="w-5 h-5 text-gray-400" />
-              </button>
+          </button>
               
               {showContainerDropdown && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl z-10">
                   {containers.map((container) => (
-                    <button
+          <button
                       key={container}
                       onClick={() => {
                         setSelectedContainer(container);
@@ -555,12 +555,12 @@ function App() {
                       }`}
                     >
                       {container}
-                    </button>
+          </button>
                   ))}
                   
                   {/* Add New Container Button */}
                   <div className="border-t border-gray-600">
-                    <button
+          <button
                       onClick={() => {
                         setShowAddContainer(!showAddContainer);
                         setShowContainerDropdown(false);
@@ -569,32 +569,12 @@ function App() {
                     >
                       <Plus className="w-4 h-4" />
                       Add New Container
-                    </button>
+          </button>
                   </div>
                 </div>
               )}
             </div>
-            
-            {/* Share Container Button */}
-            <button
-              onClick={(e) => {
-                const url = new URL(window.location.href);
-                url.searchParams.set('container', selectedContainer);
-                navigator.clipboard.writeText(url.toString());
-                // Show a brief notification
-                const button = e.currentTarget;
-                const originalText = button.textContent;
-                button.textContent = '✅ Copied!';
-                setTimeout(() => {
-                  button.textContent = originalText;
-                }, 2000);
-              }}
-              className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/50"
-              title="Share this container link"
-            >
-              🔗 Share Container
-            </button>
-          </div>
+        </div>
 
           {/* Import/Export Buttons */}
           <div className="flex items-center justify-center gap-4">
@@ -612,15 +592,15 @@ function App() {
               <FileSpreadsheet className="w-5 h-5" />
               Import from Excel
             </button>
-          </div>
-        </div>
+                  </div>
+                  </div>
 
         {/* Summary Boxes */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 animate-slide-up">
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">CBM</div>
             <div className="text-4xl font-bold text-blue-400">{totalCBM.toFixed(2)}</div>
-          </div>
+                  </div>
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">Cartons</div>
             <div className="text-4xl font-bold text-white">{totalCartons}</div>
@@ -628,33 +608,33 @@ function App() {
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">Gross weight</div>
             <div className="text-4xl font-bold text-white">{totalGrossWeight.toLocaleString('en-US')}</div>
-          </div>
-        </div>
+                </div>
+              </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 animate-slide-up">
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">CBM Ready to ship</div>
             <div className="text-4xl font-bold text-green-400">{cbmReadyToShip.toFixed(2)}</div>
-          </div>
+                  </div>
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">CBM Awaiting Supplier</div>
             <div className="text-4xl font-bold text-orange-400">{cbmAwaitingSupplier.toFixed(2)}</div>
-          </div>
+                  </div>
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">Need Payment</div>
             <div className="text-4xl font-bold text-pink-400">{needPaymentCount}</div>
-          </div>
-        </div>
+                  </div>
+                </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 animate-slide-up">
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">Product cost</div>
             <div className="text-4xl font-bold text-green-400">${Math.round(totalProductCost).toLocaleString('en-US')}</div>
-          </div>
+              </div>
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">Freight cost to forwarder</div>
             <div className="text-4xl font-bold text-pink-400">${Math.round(totalFreightCost).toLocaleString('en-US')}</div>
-          </div>
+            </div>
           <div className="bg-gray-900 rounded-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/30 border border-gray-700">
             <div className="text-sm text-white mb-2">Total product cost</div>
             <div className="text-4xl font-bold text-cyan-400">${Math.round(totalCost).toLocaleString('en-US')}</div>
@@ -921,7 +901,7 @@ function App() {
                         >
                           <Upload className="w-3 h-3" />
                         </button>
-                      </div>
+                    </div>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
@@ -957,7 +937,7 @@ function App() {
                         >
                           <Upload className="w-3 h-3" />
                         </button>
-                      </div>
+                        </div>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
@@ -1029,7 +1009,7 @@ function App() {
                         >
                           <Upload className="w-3 h-3" />
                         </button>
-                      </div>
+                    </div>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
@@ -1080,7 +1060,7 @@ function App() {
                 ))}
               </tbody>
             </table>
-          </div>
+                  </div>
 
           {/* Add New Row Button */}
           <div className="border-t border-gray-700 p-3 bg-gray-800/50">
@@ -1091,8 +1071,8 @@ function App() {
               <Plus className="w-4 h-4" />
               Add new item
             </button>
-          </div>
-        </div>
+                      </div>
+                    </div>
       </div>
 
       {/* Document Preview Modal */}
@@ -1111,7 +1091,7 @@ function App() {
               >
                 <X className="w-6 h-6" />
               </button>
-            </div>
+                        </div>
             
             {/* Modal Content */}
             <div className="flex-1 overflow-auto p-4 bg-gray-50">
@@ -1135,12 +1115,12 @@ function App() {
                     >
                       Download File
                     </a>
+                      </div>
+                    </div>
+              )}
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
+              </div>
       )}
 
       {/* Import Modal */}
@@ -1152,14 +1132,14 @@ function App() {
               <div className="flex items-center gap-3">
                 <FileSpreadsheet className="w-6 h-6 text-blue-400" />
                 <h3 className="text-xl font-semibold text-white">Import from Excel</h3>
-              </div>
+                    </div>
               <button
                 onClick={() => setShowImportModal(false)}
                 className="text-gray-400 hover:text-gray-200 transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
-            </div>
+                        </div>
             
             {/* Modal Content */}
             <div className="p-6 space-y-6">
@@ -1180,7 +1160,7 @@ function App() {
                     <div className="ml-3">
                       <div className="text-white font-medium">Add to existing data</div>
                       <div className="text-sm text-gray-400">Append imported rows to current data</div>
-                    </div>
+                      </div>
                   </label>
                   <label className="flex items-center p-3 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
                     <input
@@ -1196,10 +1176,10 @@ function App() {
                       <div className="text-sm text-gray-400">Clear existing data and import new</div>
                     </div>
                   </label>
-                </div>
-              </div>
+                    </div>
+                  </div>
 
-              <div>
+                      <div>
                 <input
                   type="file"
                   ref={excelImportRef}
@@ -1214,12 +1194,12 @@ function App() {
                   <Upload className="w-5 h-5" />
                   Select Excel File
                 </button>
-              </div>
+                      </div>
 
               <div className="text-sm text-gray-400 bg-gray-700/30 p-4 rounded-lg">
                 <p className="font-semibold text-gray-300 mb-2">Expected columns:</p>
                 <p className="text-xs">Reference Code, Supplier, Product, CBM, Cartons, Gross Weight, Product Cost, Freight Cost, Client, Status, Awaiting</p>
-              </div>
+                    </div>
             </div>
           </div>
         </div>
@@ -1240,7 +1220,7 @@ function App() {
               >
                 <X className="w-6 h-6" />
               </button>
-            </div>
+                        </div>
             
             {/* Preview Content */}
             <div className="flex-1 p-4 overflow-hidden">
@@ -1269,9 +1249,9 @@ function App() {
                           <div className="text-sm text-yellow-800">
                             <p className="font-semibold mb-1">Excel with Images Detected</p>
                             <p>This Excel file may contain inline images that cannot be previewed in the browser. Download to view all content including embedded images.</p>
-                          </div>
-                        </div>
                       </div>
+                    </div>
+                  </div>
                       <div className="space-y-2">
                         <a
                           href={previewModal.file}
@@ -1282,9 +1262,9 @@ function App() {
                         </a>
                         <div className="text-xs text-gray-500">
                           💡 Tip: Open in Excel to see inline images
-                        </div>
-                      </div>
-                    </div>
+                </div>
+              </div>
+            </div>
                   ) : previewModal.name.toLowerCase().includes('word') || 
                     previewModal.name.toLowerCase().includes('docx') || 
                     previewModal.name.toLowerCase().includes('doc') ||
@@ -1343,7 +1323,7 @@ function App() {
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-500">
                   💡 Tip: PDF files can be viewed directly. Other files can be downloaded.
-                </div>
+              </div>
                 <button
                   onClick={() => setPreviewModal({ show: false, file: null, name: '' })}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
@@ -1365,14 +1345,14 @@ function App() {
               <div className="flex items-center gap-3">
                 <Plus className="w-6 h-6 text-green-400" />
                 <h3 className="text-xl font-semibold text-white">Add New Container</h3>
-              </div>
+                  </div>
               <button
                 onClick={() => setShowAddContainer(false)}
                 className="text-gray-400 hover:text-gray-200 transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
-            </div>
+                  </div>
             
             {/* Modal Content */}
             <div className="p-6 space-y-6">
@@ -1391,8 +1371,8 @@ function App() {
                 />
                 <div className="mt-2 text-xs text-gray-400">
                   💡 Use your container naming convention (e.g., I110.11, I120.15)
+                  </div>
                 </div>
-              </div>
               
               <div className="flex items-center gap-4">
                 <button
@@ -1417,11 +1397,11 @@ function App() {
                     <span className="text-red-300 text-sm">
                       Container "{newContainerName}" already exists
                     </span>
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
-          </div>
+          )}
+        </div>
+      </div>
         </div>
       )}
 
