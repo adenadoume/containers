@@ -366,25 +366,6 @@ function App() {
     }
   };
 
-  // Extract images from Excel file (advanced feature)
-  const extractExcelImages = async (fileUrl: string, fileName: string) => {
-    try {
-      // This would require a more sophisticated approach
-      // For now, we'll show a message about the limitation
-      console.log('Excel image extraction not implemented yet');
-      
-      // Future implementation could:
-      // 1. Use a library like 'xlsx' to parse Excel
-      // 2. Extract embedded images as base64
-      // 3. Display them in a gallery format
-      // 4. Show alongside the data preview
-      
-      return null;
-    } catch (error) {
-      console.error('Error extracting Excel images:', error);
-      return null;
-    }
-  };
 
   // Delete row
   const deleteRow = (id: number) => {
@@ -1246,13 +1227,13 @@ function App() {
                     </div>
                   </div>
                       <div className="space-y-2">
-                        <a
-                          href={previewModal.file}
-                          download={previewModal.name}
-                          className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors inline-flex items-center gap-2"
-                        >
-                          📥 Download {previewModal.name}
-                        </a>
+                      <a
+                        href={previewModal.file || '#'}
+                        download={previewModal.name}
+                        className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors inline-flex items-center gap-2"
+                      >
+                        📥 Download {previewModal.name}
+                      </a>
                         <div className="text-xs text-gray-500">
                           💡 Tip: Open in Excel to see inline images
                 </div>
@@ -1269,7 +1250,7 @@ function App() {
                       <h4 className="text-xl font-semibold text-gray-900 mb-2">Word Document</h4>
                       <p className="text-gray-600 mb-4">Word documents cannot be previewed in browser</p>
                       <a
-                        href={previewModal.file}
+                        href={previewModal.file || '#'}
                         download={previewModal.name}
                         className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
                       >
@@ -1299,7 +1280,7 @@ function App() {
                       <h4 className="text-xl font-semibold text-gray-900 mb-2">{previewModal.name}</h4>
                       <p className="text-gray-600 mb-4">File preview not available</p>
                       <a
-                        href={previewModal.file}
+                        href={previewModal.file || '#'}
                         download={previewModal.name}
                         className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
                       >
