@@ -746,8 +746,8 @@ function App() {
                   <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '130px' }}>Awaiting</th>
                   <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Production Days</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Production Ready</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
                   <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
+                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>PL</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>CI</th>
                   <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Payment</th>
@@ -963,6 +963,18 @@ function App() {
                         className="text-base bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </td>
+                    <td className="px-4 py-3">
+                      <select 
+                        value={item.status}
+                        onChange={(e) => updateStatus(item.id, e.target.value as ContainerItem['status'])}
+                        className={`inline-flex items-center px-3 py-2 rounded-full text-lg font-medium text-white ${getStatusColor(item.status)} cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      >
+                        <option value="Ready to Ship">Ready to Ship</option>
+                        <option value="Awaiting Supplier">Awaiting Supplier</option>
+                        <option value="Need Payment">Need Payment</option>
+                        <option value="Pending">Pending</option>
+                      </select>
+                    </td>
                     <td 
                       className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'client', item.client)}
@@ -980,31 +992,6 @@ function App() {
                       ) : (
                         item.client || <span className="text-gray-400">Click to edit</span>
                       )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <select 
-                        value={item.status}
-                        onChange={(e) => updateStatus(item.id, e.target.value as ContainerItem['status'])}
-                        className={`inline-flex items-center px-3 py-2 rounded-full text-lg font-medium text-white ${getStatusColor(item.status)} cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                      >
-                        <option value="Ready to Ship">Ready to Ship</option>
-                        <option value="Awaiting Supplier">Awaiting Supplier</option>
-                        <option value="Need Payment">Need Payment</option>
-                        <option value="Pending">Pending</option>
-                      </select>
-                    </td>
-                    <td className="px-4 py-3">
-                      <select 
-                        value={item.awaiting}
-                        onChange={(e) => updateAwaiting(item.id, e.target.value)}
-                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="-">-</option>
-                        <option value="Payment">Payment</option>
-                        <option value="Certificates">Certificates</option>
-                        <option value="Documents">Documents</option>
-                        <option value="Inspection">Inspection</option>
-                      </select>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
