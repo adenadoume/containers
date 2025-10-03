@@ -35,7 +35,7 @@ function App() {
   const [editValue, setEditValue] = useState<string>('');
   const [showImportModal, setShowImportModal] = useState(false);
   const [importMode, setImportMode] = useState<'replace' | 'add'>('add');
-  const [previewModal, setPreviewModal] = useState<{ show: boolean; file: File | string | null; name: string }>({
+  const [previewModal, setPreviewModal] = useState<{ show: boolean; file: string | null; name: string }>({
     show: false,
     file: null,
     name: ''
@@ -510,13 +510,6 @@ function App() {
     }
   };
 
-  const openPreview = (url: string, name: string) => {
-    const extension = url.split('.').pop()?.toLowerCase();
-    let type = 'excel';
-    if (extension === 'pdf') type = 'pdf';
-    else if (extension === 'doc' || extension === 'docx') type = 'word';
-    setPreviewFile({ type, url, name });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
@@ -1302,7 +1295,7 @@ function App() {
                   ) : (
                     // Generic file preview
                     <div className="flex flex-col items-center justify-center h-full text-center">
-                      <File className="w-16 h-16 text-gray-500 mb-4" />
+                      <FileText className="w-16 h-16 text-gray-500 mb-4" />
                       <h4 className="text-xl font-semibold text-gray-900 mb-2">{previewModal.name}</h4>
                       <p className="text-gray-600 mb-4">File preview not available</p>
                       <a
