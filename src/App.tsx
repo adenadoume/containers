@@ -931,17 +931,16 @@ function App() {
                     </td>
                     <td className="px-4 py-3">
                       <select 
-                        multiple
-                        value={item.awaiting}
+                        value={item.awaiting[0] || '-'}
                         onChange={(e) => {
-                          const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                          const newAwaiting = e.target.value === '-' ? ['-'] : [e.target.value];
                           setContainerData(containerData.map(dataItem => 
-                            dataItem.id === item.id ? { ...dataItem, awaiting: selectedOptions } : dataItem
+                            dataItem.id === item.id ? { ...dataItem, awaiting: newAwaiting } : dataItem
                           ));
                         }}
-                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[40px]"
-                        size={Math.min(item.awaiting.length + 1, 4)}
+                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
+                        <option value="-">-</option>
                         <option value="Payment">Payment</option>
                         <option value="Certificates">Certificates</option>
                         <option value="Documents">Documents</option>
