@@ -49,7 +49,7 @@ function App() {
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const excelImportRef = useRef<HTMLInputElement>(null);
 
-  const [containers, setContainers] = useState(['I110.12 SOUTH', 'I110.11 NORTH', 'I269.1', 'I269.2', 'SUPPLIER LIST']);
+  const [containers, setContainers] = useState(['I110.12 SOUTH', 'I110.11 SOUTH', 'I269.1', 'I269.2', 'SUPPLIER LIST']);
   
   // TODO: SUPPLIER LIST functionality
   // When SUPPLIER LIST is selected, show a separate table for managing supplier information
