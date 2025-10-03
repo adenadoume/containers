@@ -30,7 +30,7 @@ type EditingCell = {
 } | null;
 
 function App() {
-  const [selectedContainer, setSelectedContainer] = useState('I110.11');
+  const [selectedContainer, setSelectedContainer] = useState('I110 SOUTH');
   const [showContainerDropdown, setShowContainerDropdown] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ type: string; url: string; name: string } | null>(null);
   const [editingCell, setEditingCell] = useState<EditingCell>(null);
@@ -48,7 +48,7 @@ function App() {
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const excelImportRef = useRef<HTMLInputElement>(null);
 
-  const [containers, setContainers] = useState(['I110.11', 'I110.9', 'I112.5', 'I115.3']);
+  const [containers, setContainers] = useState(['I110 SOUTH', 'I110.12 NORTH', 'I269.1', 'I269.2']);
 
   // Initialize container from URL on mount
   useEffect(() => {
@@ -85,7 +85,7 @@ function App() {
   const initialData: ContainerItem[] = [
     {
       id: 1,
-      referenceCode: 'I112',
+      referenceCode: 'I110-S001',
       supplier: 'Shandong HYRT Water-S...',
       product: 'Irrigation',
       cbm: 10.5,
@@ -253,8 +253,8 @@ function App() {
         setContainerData([]);
       }
     } else {
-      // No saved data - check if this is the default container (I110.11)
-      if (selectedContainer === 'I110.11') {
+      // No saved data - check if this is the default container (I110 SOUTH)
+      if (selectedContainer === 'I110 SOUTH') {
         setContainerData(initialData);
       } else {
         // For new containers, start with empty data
@@ -1496,7 +1496,7 @@ function App() {
                   onKeyDown={(e) => e.key === 'Enter' && addNewContainer()}
                 />
                 <div className="mt-2 text-xs text-gray-400">
-                  💡 Use your container naming convention (e.g., I110.11, I120.15)
+                  💡 Use your container naming convention (e.g., I110 SOUTH, I269.1)
                   </div>
                 </div>
               
