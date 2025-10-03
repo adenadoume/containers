@@ -817,7 +817,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-lg text-gray-300 cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-xl text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'supplier', item.supplier)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'supplier' ? (
@@ -835,7 +835,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-lg text-gray-300 cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-xl text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'product', item.product)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'product' ? (
@@ -853,7 +853,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-right cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-xl text-right cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'cbm', item.cbm)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cbm' ? (
@@ -910,7 +910,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-right font-medium text-green-400 cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-xl text-right font-medium text-green-400 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'productCost', item.productCost)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'productCost' ? (
@@ -956,7 +956,7 @@ function App() {
                             dataItem.id === item.id ? { ...dataItem, awaiting: newAwaiting } : dataItem
                           ));
                         }}
-                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="text-xl bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="-">-</option>
                         <option value="Payment">Payment</option>
@@ -995,7 +995,7 @@ function App() {
                             dataItem.id === item.id ? { ...dataItem, productionReady: e.target.value } : dataItem
                           ));
                         }}
-                        className="text-base bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="text-xl bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -1018,7 +1018,7 @@ function App() {
                             dataItem.id === item.id ? { ...dataItem, client: e.target.value } : dataItem
                           ));
                         }}
-                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="text-xl bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="">Select Client</option>
                         <option value="Pitoulis AE">Pitoulis AE</option>
