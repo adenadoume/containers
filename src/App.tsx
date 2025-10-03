@@ -499,7 +499,6 @@ function App() {
         <div className="mb-6 text-center animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Container Planning</h1>
           <p className="text-lg text-gray-300">Logistics Management System</p>
-          <p className="text-xs text-green-400 mt-1">✓ Auto-saving to your browser</p>
         </div>
 
         {/* Container Selector & Action Buttons */}
