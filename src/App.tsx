@@ -51,7 +51,7 @@ function App() {
 
   const [containers, setContainers] = useState(['I110.12 NORTH', 'I110.11 SOUTH', 'I269.1', 'I269.2', 'SUPPLIER LIST']);
   
-  // TODO: SUPPLIER LIST functionality
+  // TODO: SUPPLIER LIST functionality - Updated
   // When SUPPLIER LIST is selected, show a separate table for managing supplier information
   // When entering a reference code in any container entry, auto-fill supplier details:
   // - supplier name, product, address, contact info, etc.
