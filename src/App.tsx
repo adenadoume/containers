@@ -30,7 +30,7 @@ type EditingCell = {
 } | null;
 
 function App() {
-  const [selectedContainer, setSelectedContainer] = useState('I110.11 SOUTH');
+  const [selectedContainer, setSelectedContainer] = useState('I110.12 SOUTH');
   const [showContainerDropdown, setShowContainerDropdown] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ type: string; url: string; name: string } | null>(null);
   const [editingCell, setEditingCell] = useState<EditingCell>(null);
@@ -49,7 +49,7 @@ function App() {
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const excelImportRef = useRef<HTMLInputElement>(null);
 
-  const [containers, setContainers] = useState(['I110.11 SOUTH', 'I110.12 NORTH', 'I269.1', 'I269.2', 'SUPPLIER LIST']);
+  const [containers, setContainers] = useState(['I110.12 SOUTH', 'I110.11 NORTH', 'I269.1', 'I269.2', 'SUPPLIER LIST']);
   
   // TODO: SUPPLIER LIST functionality
   // When SUPPLIER LIST is selected, show a separate table for managing supplier information
@@ -274,8 +274,8 @@ function App() {
         setContainerData([]);
       }
     } else {
-      // No saved data - check if this is the default container (I110.11 SOUTH)
-      if (selectedContainer === 'I110.11 SOUTH') {
+      // No saved data - check if this is the default container (I110.12 SOUTH)
+      if (selectedContainer === 'I110.12 SOUTH') {
         setContainerData(initialData);
       } else {
         // For new containers, start with empty data
