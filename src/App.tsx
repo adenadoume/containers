@@ -49,7 +49,13 @@ function App() {
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const excelImportRef = useRef<HTMLInputElement>(null);
 
-  const [containers, setContainers] = useState(['I110.11 SOUTH', 'I110.12 NORTH', 'I269.1', 'I269.2']);
+  const [containers, setContainers] = useState(['I110.11 SOUTH', 'I110.12 NORTH', 'I269.1', 'I269.2', 'SUPPLIER LIST']);
+  
+  // TODO: SUPPLIER LIST functionality
+  // When SUPPLIER LIST is selected, show a separate table for managing supplier information
+  // When entering a reference code in any container entry, auto-fill supplier details:
+  // - supplier name, product, address, contact info, etc.
+  // This will require a supplier database/table with reference codes as keys
 
   // Initialize container from URL on mount
   useEffect(() => {
@@ -633,6 +639,18 @@ function App() {
 
         {/* Container Selector & Action Buttons */}
         <div className="mb-8">
+          {selectedContainer === 'SUPPLIER LIST' && (
+            <div className="mb-4 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+              <div className="flex items-center gap-2 text-blue-400">
+                <FileText className="w-5 h-5" />
+                <span className="font-semibold">SUPPLIER LIST Mode</span>
+              </div>
+              <p className="text-gray-300 text-sm mt-1">
+                📝 TODO: This will show a supplier management table. When entering reference codes in container entries, 
+                supplier details (name, product, address, contact info) will auto-fill based on this database.
+              </p>
+            </div>
+          )}
           <div className="flex items-center justify-center gap-4 mb-4">
             <span className="text-lg font-medium text-gray-300">Select Container</span>
             <div className="relative" style={{ width: '50%' }} ref={containerDropdownRef}>
