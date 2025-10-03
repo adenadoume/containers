@@ -768,25 +768,25 @@ function App() {
             <table className="w-full">
               <thead className="bg-gray-900 border-b-2 border-gray-600">
                 <tr>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Code</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '280px' }}>Supplier</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '180px' }}>Product</th>
-                  <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>CBM</th>
-                  <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Cartons</th>
-                  <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Gross Weight</th>
-                  <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Product Cost</th>
-                  <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Freight Cost</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '130px' }}>Awaiting</th>
-                  <th className="px-4 py-3 text-right text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Production Days</th>
-                  <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Production Ready</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
-                  <th className="px-4 py-3 text-left text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
-                  <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>PL</th>
-                  <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>CI</th>
-                  <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Payment</th>
-                  <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>HBL</th>
-                  <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Certificates</th>
-                  <th className="px-4 py-3 text-center text-base font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Actions</th>
+                  <th className="px-4 py-3 text-left text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Code</th>
+                  <th className="px-4 py-3 text-left text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '280px' }}>Supplier</th>
+                  <th className="px-4 py-3 text-left text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '180px' }}>Product</th>
+                  <th className="px-4 py-3 text-right text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>CBM</th>
+                  <th className="px-4 py-3 text-right text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Cartons</th>
+                  <th className="px-4 py-3 text-right text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Gross Weight</th>
+                  <th className="px-4 py-3 text-right text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Product Cost</th>
+                  <th className="px-4 py-3 text-right text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Freight Cost</th>
+                  <th className="px-4 py-3 text-left text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '130px' }}>Awaiting</th>
+                  <th className="px-4 py-3 text-right text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Production Days</th>
+                  <th className="px-4 py-3 text-center text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Production Ready</th>
+                  <th className="px-4 py-3 text-left text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
+                  <th className="px-4 py-3 text-left text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
+                  <th className="px-4 py-3 text-center text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>PL</th>
+                  <th className="px-4 py-3 text-center text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>CI</th>
+                  <th className="px-4 py-3 text-center text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Payment</th>
+                  <th className="px-4 py-3 text-center text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>HBL</th>
+                  <th className="px-4 py-3 text-center text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Certificates</th>
+                  <th className="px-4 py-3 text-center text-lg font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -799,7 +799,7 @@ function App() {
                   >
                     {/* Editable cells */}
                     <td 
-                      className="px-4 py-3 text-base font-medium text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-lg font-medium text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'referenceCode', item.referenceCode)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'referenceCode' ? (
@@ -817,7 +817,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-base text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'supplier', item.supplier)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'supplier' ? (
@@ -835,7 +835,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-base text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'product', item.product)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'product' ? (
@@ -872,7 +872,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-base text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-lg text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'cartons', item.cartons)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cartons' ? (
@@ -891,7 +891,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-base text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-lg text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'grossWeight', item.grossWeight)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'grossWeight' ? (
@@ -929,7 +929,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-base text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-lg text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'freightCost', item.freightCost)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'freightCost' ? (
@@ -968,7 +968,7 @@ function App() {
                       </select>
                     </td>
                     <td 
-                      className="px-4 py-3 text-base text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-4 py-3 text-lg text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'productionDays', item.productionDays)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'productionDays' ? (
