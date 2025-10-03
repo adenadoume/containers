@@ -30,6 +30,7 @@ type EditingCell = {
 } | null;
 
 function App() {
+  // Force rebuild - TypeScript errors resolved
   const [selectedContainer, setSelectedContainer] = useState('I110.12 NORTH');
   const [showContainerDropdown, setShowContainerDropdown] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ type: string; url: string; name: string } | null>(null);
