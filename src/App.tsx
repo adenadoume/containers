@@ -331,6 +331,8 @@ function App() {
         // Convert to appropriate type
         if (['cbm', 'cartons', 'grossWeight', 'productCost', 'freightCost'].includes(field as string)) {
           value = parseFloat(editValue) || 0;
+        } else if (field === 'awaiting') {
+          value = [editValue || '-'];
         }
         
         return { ...item, [field]: value };
@@ -914,23 +916,23 @@ function App() {
                         `$${Math.round(item.freightCost).toLocaleString('en-US')}`
                       )}
                     </td>
-                    <td className="px-4 py-3">
-                      <select 
-                        value={item.awaiting[0] || '-'}
-                        onChange={(e) => {
-                          const newAwaiting = e.target.value === '-' ? ['-'] : [e.target.value];
-                          setContainerData(containerData.map(dataItem => 
-                            dataItem.id === item.id ? { ...dataItem, awaiting: newAwaiting } : dataItem
-                          ));
-                        }}
-                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="-">-</option>
-                        <option value="Payment">Payment</option>
-                        <option value="Certificates">Certificates</option>
-                        <option value="Documents">Documents</option>
-                        <option value="Inspection">Inspection</option>
-                      </select>
+                    <td 
+                      className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
+                      onClick={() => startEditing(item.id, 'awaiting', item.awaiting[0] || '-')}
+                    >
+                      {editingCell?.id === item.id && editingCell?.field === 'awaiting' ? (
+                        <input
+                          type="text"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onBlur={saveEdit}
+                          onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
+                          autoFocus
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
+                        />
+                      ) : (
+                        item.awaiting[0] || <span className="text-gray-400">Click to edit</span>
+                      )}
                     </td>
                     <td 
                       className="px-4 py-3 text-base text-right text-white cursor-pointer hover:bg-blue-900/30"
@@ -975,23 +977,23 @@ function App() {
                         <option value="Pending">Pending</option>
                       </select>
                     </td>
-                    <td 
-                      className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
-                      onClick={() => startEditing(item.id, 'client', item.client)}
-                    >
-                      {editingCell?.id === item.id && editingCell?.field === 'client' ? (
-                        <input
-                          type="text"
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          onBlur={saveEdit}
-                          onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
-                          autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
-                        />
-                      ) : (
-                        item.client || <span className="text-gray-400">Click to edit</span>
-                      )}
+                    <td className="px-4 py-3">
+                      <select 
+                        value={item.client}
+                        onChange={(e) => {
+                          setContainerData(containerData.map(dataItem => 
+                            dataItem.id === item.id ? { ...dataItem, client: e.target.value } : dataItem
+                          ));
+                        }}
+                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select Client</option>
+                        <option value="Pitoulis AE">Pitoulis AE</option>
+                        <option value="AgroTech Ltd">AgroTech Ltd</option>
+                        <option value="Green Solutions">Green Solutions</option>
+                        <option value="FarmPro Inc">FarmPro Inc</option>
+                        <option value="Irrigation Plus">Irrigation Plus</option>
+                      </select>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
