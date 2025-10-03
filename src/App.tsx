@@ -427,9 +427,11 @@ function App() {
       'Gross Weight': item.grossWeight,
       'Product Cost': item.productCost,
       'Freight Cost': item.freightCost,
-      'Client': item.client,
+      'Awaiting': item.awaiting.join(', '),
+      'Production Days': item.productionDays,
+      'Production Ready': item.productionReady,
       'Status': item.status,
-      'Awaiting': item.awaiting,
+      'Client': item.client,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -559,9 +561,11 @@ function App() {
         grossWeight: parseFloat(row['Gross Weight']) || 0,
         productCost: parseFloat(row['Product Cost']) || 0,
         freightCost: parseFloat(row['Freight Cost']) || 0,
-        client: row['Client'] || '',
         status: row['Status'] || 'Pending' as ContainerItem['status'],
-        awaiting: row['Awaiting'] || '-',
+        awaiting: row['Awaiting'] ? (row['Awaiting'] as string).split(',').map(s => s.trim()) : ['-'],
+        productionDays: parseInt(row['Production Days']) || 0,
+        productionReady: row['Production Ready'] || '',
+        client: row['Client'] || '',
       }));
 
       if (importMode === 'replace') {
@@ -909,6 +913,55 @@ function App() {
                       ) : (
                         `$${Math.round(item.freightCost).toLocaleString('en-US')}`
                       )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <select 
+                        value={item.awaiting[0] || '-'}
+                        onChange={(e) => {
+                          const newAwaiting = e.target.value === '-' ? ['-'] : [e.target.value];
+                          setContainerData(containerData.map(dataItem => 
+                            dataItem.id === item.id ? { ...dataItem, awaiting: newAwaiting } : dataItem
+                          ));
+                        }}
+                        className="text-lg bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="-">-</option>
+                        <option value="Payment">Payment</option>
+                        <option value="Certificates">Certificates</option>
+                        <option value="Documents">Documents</option>
+                        <option value="Inspection">Inspection</option>
+                      </select>
+                    </td>
+                    <td 
+                      className="px-4 py-3 text-base text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      onClick={() => startEditing(item.id, 'productionDays', item.productionDays)}
+                    >
+                      {editingCell?.id === item.id && editingCell?.field === 'productionDays' ? (
+                        <input
+                          type="text"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value.replace(/[^0-9]/g, ''))}
+                          onBlur={saveEdit}
+                          onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
+                          autoFocus
+                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          placeholder="0"
+                        />
+                      ) : (
+                        item.productionDays || <span className="text-gray-500">Click to edit</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <input
+                        type="date"
+                        value={item.productionReady}
+                        onChange={(e) => {
+                          setContainerData(containerData.map(dataItem => 
+                            dataItem.id === item.id ? { ...dataItem, productionReady: e.target.value } : dataItem
+                          ));
+                        }}
+                        className="text-base bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
                     </td>
                     <td 
                       className="px-4 py-3 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
