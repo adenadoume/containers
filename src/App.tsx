@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, FileText, Eye, Plus, X, Upload, Trash2, Download, FileSpreadsheet } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import { containerService, containerItemService } from './services/supabase';
 
 interface ContainerItem {
   id: number;
@@ -104,234 +105,127 @@ function App() {
     };
   }, []);
 
-  const initialData: ContainerItem[] = [
-    {
-      id: 1,
-      referenceCode: 'I110-S001',
-      supplier: 'Shandong HYRT Water-S...',
-      product: 'Irrigation',
-      cbm: 10.5,
-      cartons: 19,
-      grossWeight: 292701,
-      productCost: 6266.9,
-      freightCost: 0,
-      status: 'Ready to Ship',
-      awaiting: ['-'],
-      productionDays: 15,
-      productionReady: '2024-02-15',
-      client: 'Pitoulis AE',
-      packingList: { url: '/miktoyear.xlsx', name: 'Packing_List_I112.xlsx' },
-      commercialInvoice: { url: '/miktoyear.xlsx', name: 'Commercial_Invoice_I112.pdf' },
-    },
-    {
-      id: 2,
-      referenceCode: 'I248',
-      supplier: 'Foshan Jiasu Building Ma...',
-      product: 'Outdoor Furniture',
-      cbm: 13.0,
-      cartons: 72,
-      grossWeight: 1261,
-      productCost: 7138.0,
-      freightCost: 450,
-      status: 'Ready to Ship',
-      awaiting: ['-'],
-      productionDays: 20,
-      productionReady: '2024-02-20',
-      client: 'Alpha Max Holdings',
-      commercialInvoice: { url: '/miktoyear.xlsx', name: 'Commercial_Invoice_I248.pdf' },
-    },
-    {
-      id: 3,
-      referenceCode: 'I258',
-      supplier: 'Chaozhou Shangcai Cera...',
-      product: 'SouthVilla Bath',
-      cbm: 25.0,
-      cartons: 0,
-      grossWeight: 0,
-      productCost: 12110.0,
-      freightCost: 800,
-      status: 'Awaiting Supplier',
-      awaiting: ['Payment'],
-      productionDays: 30,
-      productionReady: '2024-03-01',
-      client: 'Tzimas Constructions',
-      hbl: { url: '/miktoyear.xlsx', name: 'HBL_I258.pdf' },
-    },
-    {
-      id: 4,
-      referenceCode: 'I107',
-      supplier: '1stshine Industrial Compa...',
-      product: 'Ceiling Fans',
-      cbm: 6.67,
-      cartons: 120,
-      grossWeight: 840,
-      productCost: 9495.5,
-      freightCost: 350,
-      status: 'Ready to Ship',
-      awaiting: ['Certificates'],
-      productionDays: 25,
-      productionReady: '2024-02-25',
-      client: 'Frank Wilemsen',
-      packingList: { url: '/miktoyear.xlsx', name: 'Packing_List_I107.xlsx' },
-      certificates: { url: '/miktoyear.xlsx', name: 'Quality_Certificates_I107.pdf' },
-    },
-    {
-      id: 5,
-      referenceCode: 'I165',
-      supplier: 'Jiangmen Mega Casa Co....',
-      product: 'Shower Column',
-      cbm: 7.0,
-      cartons: 67,
-      grossWeight: 1133,
-      productCost: 14867.2,
-      freightCost: 420,
-      status: 'Ready to Ship',
-      awaiting: ['-'],
-      productionDays: 18,
-      productionReady: '2024-02-18',
-      client: 'Lodora Residences',
-      payment: { url: '/miktoyear.xlsx', name: 'Payment_Receipt_I165.pdf' },
-    },
-    {
-      id: 6,
-      referenceCode: 'I124',
-      supplier: 'Sunda Hardware Produce...',
-      product: 'Door Stops',
-      cbm: 0.1,
-      cartons: 6,
-      grossWeight: 745,
-      productCost: 593.0,
-      freightCost: 50,
-      status: 'Ready to Ship',
-      awaiting: ['-'],
-      productionDays: 12,
-      productionReady: '2024-02-12',
-      client: 'Esso Mandel AE',
-    },
-    {
-      id: 7,
-      referenceCode: 'I261',
-      supplier: 'Weihai Bluebay Outdoor ...',
-      product: 'Sup Board',
-      cbm: 0.8,
-      cartons: 10,
-      grossWeight: 150,
-      productCost: 1250.0,
-      freightCost: 100,
-      status: 'Ready to Ship',
-      awaiting: ['-'],
-      productionDays: 8,
-      productionReady: '2024-02-08',
-      client: 'Spijkers',
-    },
-    {
-      id: 8,
-      referenceCode: 'I264',
-      supplier: 'GuangZhou Flishel (Freez...',
-      product: 'Flishel Refrigeration',
-      cbm: 5.5,
-      cartons: 0,
-      grossWeight: 0,
-      productCost: 2150.0,
-      freightCost: 0,
-      status: 'Need Payment',
-      awaiting: ['Payment'],
-      productionDays: 22,
-      productionReady: '2024-02-22',
-      client: 'Medlicott IKE',
-    },
-  ];
-
   const [containerData, setContainerData] = useState<ContainerItem[]>([]);
 
-  // Load containers from localStorage on mount
+  // Load containers from Supabase on mount
   useEffect(() => {
-    const savedContainers = localStorage.getItem('containers');
-    if (savedContainers) {
+    const loadContainers = async () => {
       try {
-        const parsed = JSON.parse(savedContainers);
-        setContainers(parsed);
+        const data = await containerService.getAll();
+        setContainers(data.map(c => c.name));
       } catch (error) {
-        console.error('Failed to load saved containers:', error);
+        console.error('Failed to load containers:', error);
       }
-    }
+    };
+    loadContainers();
   }, []);
 
-  // Save containers to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('containers', JSON.stringify(containers));
-  }, [containers]);
+  // Containers are now saved directly to Supabase when created/deleted
 
-  // Load data from localStorage on mount and when container changes
+  // Load data from Supabase when container changes
   useEffect(() => {
-    const savedData = localStorage.getItem(`container_${selectedContainer}`);
-    if (savedData) {
+    const loadContainerData = async () => {
       try {
-        const parsed = JSON.parse(savedData);
-        setContainerData(parsed);
+        const items = await containerItemService.getByContainer(selectedContainer);
+        // Convert Supabase format to app format
+        const convertedItems: ContainerItem[] = items.map(item => ({
+          id: item.id || 0,
+          referenceCode: item.reference_code,
+          supplier: item.supplier,
+          product: item.product,
+          cbm: item.cbm,
+          cartons: item.cartons,
+          grossWeight: item.gross_weight,
+          productCost: item.product_cost,
+          freightCost: item.freight_cost,
+          status: item.status,
+          awaiting: item.awaiting,
+          productionDays: item.production_days,
+          productionReady: item.production_ready,
+          client: item.client,
+          packingList: item.packing_list,
+          commercialInvoice: item.commercial_invoice,
+          payment: item.payment,
+          hbl: item.hbl,
+          certificates: item.certificates,
+        }));
+        setContainerData(convertedItems);
       } catch (error) {
-        console.error('Failed to load saved data:', error);
-        // If parsing fails, start with empty data
+        console.error('Failed to load container data:', error);
         setContainerData([]);
       }
-    } else {
-      // No saved data - check if this is the default container (I110.12 NORTH)
-      if (selectedContainer === 'I110.12 NORTH') {
-        setContainerData(initialData);
-      } else {
-        // For new containers, start with empty data
-        setContainerData([]);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    };
+    loadContainerData();
   }, [selectedContainer]);
 
-  // Save data to localStorage whenever it changes
-  useEffect(() => {
-    if (containerData.length > 0) {
-      localStorage.setItem(`container_${selectedContainer}`, JSON.stringify(containerData));
-      
-      // Show save notification briefly
-      setShowSaveNotification(true);
-      const timer = setTimeout(() => {
-        setShowSaveNotification(false);
-      }, 2000); // Hide after 2 seconds
-      
-      return () => clearTimeout(timer);
-    }
-  }, [containerData, selectedContainer]);
+  // Data is now automatically saved to Supabase on each change
+  // Save notification is shown after successful updates
 
   // Add new row
-  const addNewRow = () => {
-    const newId = Math.max(...containerData.map(item => item.id), 0) + 1;
-    const newItem: ContainerItem = {
-      id: newId,
-      referenceCode: '',
+  const addNewRow = async () => {
+    const newItem = {
+      container_name: selectedContainer,
+      reference_code: '',
       supplier: '',
       product: '',
       cbm: 0,
       cartons: 0,
-      grossWeight: 0,
-      productCost: 0,
-      freightCost: 0,
-      status: 'Pending',
+      gross_weight: 0,
+      product_cost: 0,
+      freight_cost: 0,
+      status: 'Pending' as const,
       awaiting: ['-'],
-      productionDays: 0,
-      productionReady: '',
+      production_days: 0,
+      production_ready: '',
       client: '',
     };
-    setContainerData([...containerData, newItem]);
+    
+    try {
+      const created = await containerItemService.create(newItem);
+      const convertedItem: ContainerItem = {
+        id: created.id || 0,
+        referenceCode: created.reference_code,
+        supplier: created.supplier,
+        product: created.product,
+        cbm: created.cbm,
+        cartons: created.cartons,
+        grossWeight: created.gross_weight,
+        productCost: created.product_cost,
+        freightCost: created.freight_cost,
+        status: created.status,
+        awaiting: created.awaiting,
+        productionDays: created.production_days,
+        productionReady: created.production_ready,
+        client: created.client,
+      };
+      setContainerData([...containerData, convertedItem]);
+      
+      setShowSaveNotification(true);
+      setTimeout(() => setShowSaveNotification(false), 2000);
+    } catch (error) {
+      console.error('Failed to add new row:', error);
+      alert('Failed to add new row. Please try again.');
+    }
   };
 
   // Add new container
-  const addNewContainer = () => {
+  const addNewContainer = async () => {
     if (newContainerName.trim() && !containers.includes(newContainerName.trim())) {
       const newContainer = newContainerName.trim();
-      setContainers([...containers, newContainer]);
-      setSelectedContainer(newContainer);
-      setContainerData([]); // Start with empty data for new container
-      setNewContainerName('');
-      setShowAddContainer(false);
+      try {
+        await containerService.create(newContainer);
+        setContainers([...containers, newContainer]);
+        setSelectedContainer(newContainer);
+        setContainerData([]); // Start with empty data for new container
+        setNewContainerName('');
+        setShowAddContainer(false);
+        
+        setShowSaveNotification(true);
+        setTimeout(() => setShowSaveNotification(false), 2000);
+      } catch (error) {
+        console.error('Failed to create container:', error);
+        alert('Failed to create container. Please try again.');
+      }
     }
   };
 
@@ -342,33 +236,70 @@ function App() {
   };
 
   // Save edited value
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!editingCell) return;
     
-    setContainerData(containerData.map(item => {
-      if (item.id === editingCell.id) {
-        const field = editingCell.field;
-        let value: any = editValue;
-        
-        // Convert to appropriate type
-        if (['cbm', 'cartons', 'grossWeight', 'productCost', 'freightCost'].includes(field as string)) {
-          value = parseFloat(editValue) || 0;
-        }
-        
-        return { ...item, [field]: value };
-      }
-      return item;
-    }));
+    const itemToUpdate = containerData.find(item => item.id === editingCell.id);
+    if (!itemToUpdate) return;
+    
+    const field = editingCell.field;
+    let value: any = editValue;
+    
+    // Convert to appropriate type
+    if (['cbm', 'cartons', 'grossWeight', 'productCost', 'freightCost'].includes(field as string)) {
+      value = parseFloat(editValue) || 0;
+    }
+    
+    const updatedItem = { ...itemToUpdate, [field]: value };
+    
+    // Convert to Supabase format
+    const supabaseUpdate: any = {};
+    const fieldMap: Record<string, string> = {
+      referenceCode: 'reference_code',
+      grossWeight: 'gross_weight',
+      productCost: 'product_cost',
+      freightCost: 'freight_cost',
+      productionDays: 'production_days',
+      productionReady: 'production_ready',
+      packingList: 'packing_list',
+      commercialInvoice: 'commercial_invoice',
+    };
+    
+    const supabaseField = fieldMap[field as string] || field;
+    supabaseUpdate[supabaseField] = value;
+    
+    try {
+      await containerItemService.update(itemToUpdate.id, supabaseUpdate);
+      
+      setContainerData(containerData.map(item => 
+        item.id === editingCell.id ? updatedItem : item
+      ));
+      
+      setShowSaveNotification(true);
+      setTimeout(() => setShowSaveNotification(false), 2000);
+    } catch (error) {
+      console.error('Failed to update item:', error);
+      alert('Failed to save changes. Please try again.');
+    }
     
     setEditingCell(null);
     setEditValue('');
   };
 
   // Update status
-  const updateStatus = (id: number, status: ContainerItem['status']) => {
-    setContainerData(containerData.map(item => 
-      item.id === id ? { ...item, status } : item
-    ));
+  const updateStatus = async (id: number, status: ContainerItem['status']) => {
+    try {
+      await containerItemService.update(id, { status });
+      setContainerData(containerData.map(item => 
+        item.id === id ? { ...item, status } : item
+      ));
+      
+      setShowSaveNotification(true);
+      setTimeout(() => setShowSaveNotification(false), 2000);
+    } catch (error) {
+      console.error('Failed to update status:', error);
+      alert('Failed to update status. Please try again.');
+    }
   };
 
 
@@ -621,6 +552,63 @@ function App() {
     reader.readAsArrayBuffer(file);
   };
 
+  // Export ALL localStorage data to JSON
+  const exportAllDataToJSON = () => {
+    const allData: any = {};
+    
+    // Get all containers
+    const containersData = localStorage.getItem('containers');
+    if (containersData) {
+      allData.containers = JSON.parse(containersData);
+    }
+    
+    // Get all container data
+    const containerKeys = Object.keys(localStorage).filter(key => key.startsWith('container_'));
+    containerKeys.forEach(key => {
+      const data = localStorage.getItem(key);
+      if (data) {
+        allData[key] = JSON.parse(data);
+      }
+    });
+    
+    // Create and download JSON file
+    const jsonString = JSON.stringify(allData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'containers_data_backup.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Import ALL data from JSON
+  const importAllDataFromJSON = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target?.result as string);
+        
+        // Import all data to localStorage
+        Object.keys(importedData).forEach(key => {
+          localStorage.setItem(key, JSON.stringify(importedData[key]));
+        });
+        
+        // Reload the page to reflect changes
+        window.location.reload();
+      } catch (error) {
+        console.error('Error importing data:', error);
+        alert('Error importing data. Please make sure the file is valid JSON.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   // Calculate summary metrics
   const totalCBM = containerData.reduce((sum, item) => sum + item.cbm, 0);
   const totalCartons = containerData.reduce((sum, item) => sum + item.cartons, 0);
@@ -731,6 +719,23 @@ function App() {
               <FileSpreadsheet className="w-5 h-5" />
               Import from Excel
             </button>
+            <button
+              onClick={exportAllDataToJSON}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/50"
+            >
+              <Download className="w-5 h-5" />
+              Export All Data
+            </button>
+            <label className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg font-semibold hover:from-orange-700 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-orange-500/50 cursor-pointer">
+              <Upload className="w-5 h-5" />
+              Import All Data
+              <input
+                type="file"
+                accept=".json"
+                onChange={importAllDataFromJSON}
+                className="hidden"
+              />
+            </label>
                   </div>
                   </div>
 
