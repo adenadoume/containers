@@ -1380,8 +1380,19 @@ function App() {
 
       {/* Document Preview Modal */}
       {previewFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-2xl flex flex-col" style={{ position: 'fixed', top: '10px', left: '10px', right: '10px', bottom: '10px' }}>
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50">
+          <div 
+            className="bg-white flex flex-col" 
+            style={{ 
+              position: 'absolute', 
+              top: '20px', 
+              left: '20px', 
+              right: '20px', 
+              bottom: '20px',
+              width: 'calc(100vw - 40px)',
+              height: 'calc(100vh - 40px)'
+            }}
+          >
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
               <div className="flex items-center gap-3">
@@ -1397,11 +1408,11 @@ function App() {
             </div>
             
             {/* Modal Content */}
-            <div className="flex-1 overflow-auto bg-gray-50">
+            <div className="flex-1 bg-gray-50" style={{ height: 'calc(100% - 60px)', overflow: 'auto' }}>
               {previewFile.type === 'pdf' && (
                 <iframe
                   src={previewFile.url}
-                  className="w-full h-full border-0"
+                  style={{ width: '100%', height: '100%', border: 'none' }}
                   title={previewFile.name}
                 />
               )}
