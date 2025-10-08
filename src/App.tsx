@@ -1297,8 +1297,8 @@ function App() {
 
       {/* Document Preview Modal */}
       {previewFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
-          <div className="bg-white rounded-lg shadow-2xl flex flex-col" style={{ width: '90vw', height: '90vh' }}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-1">
+          <div className="bg-white rounded-lg shadow-2xl flex flex-col" style={{ width: '96vw', height: '96vh' }}>
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <div className="flex items-center gap-3">
