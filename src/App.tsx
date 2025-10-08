@@ -1521,8 +1521,19 @@ function App() {
 
       {/* New Light File Preview Modal */}
       {previewModal.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-2xl max-w-5xl w-full max-h-[95vh] flex flex-col">
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50">
+          <div 
+            className="bg-white flex flex-col" 
+            style={{ 
+              position: 'absolute', 
+              top: '20px', 
+              left: '20px', 
+              right: '20px', 
+              bottom: '20px',
+              width: 'calc(100vw - 40px)',
+              height: 'calc(100vh - 40px)'
+            }}
+          >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -1537,7 +1548,7 @@ function App() {
                         </div>
             
             {/* Preview Content */}
-            <div className="flex-1 p-4 overflow-hidden">
+            <div className="flex-1 bg-gray-50" style={{ height: 'calc(100% - 60px)', overflow: 'auto' }}>
               {previewModal.file && (
                 <div className="w-full h-full">
                   {previewModal.name.toLowerCase().includes('pdf') || 
@@ -1545,7 +1556,7 @@ function App() {
                     // PDF Preview
                     <iframe
                       src={previewModal.file}
-                      className="w-full h-full border-0 rounded"
+                      style={{ width: '100%', height: '100%', border: 'none' }}
                       title={`Preview of ${previewModal.name}`}
                     />
                   ) : previewModal.name.toLowerCase().includes('excel') || 
