@@ -694,7 +694,6 @@ function App() {
         {/* Header */}
         <div className="mb-6 text-center animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Container Planning</h1>
-          <p className="text-lg text-gray-300">Logistics Management System</p>
         </div>
 
         {/* Container Selector & Action Buttons */}
