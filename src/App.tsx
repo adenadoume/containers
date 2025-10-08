@@ -130,6 +130,43 @@ function App() {
     const loadContainerData = async () => {
       try {
         const items = await containerItemService.getByContainer(selectedContainer);
+        
+        // Helper function to convert file metadata to blob URL
+        const convertFileMetadata = (fileMetadata: any) => {
+          if (!fileMetadata) return undefined;
+          
+          // If it's already in the correct format (has url and name)
+          if (typeof fileMetadata === 'object' && fileMetadata.url && fileMetadata.name) {
+            return fileMetadata;
+          }
+          
+          // If it has base64 data, convert it to blob URL
+          if (typeof fileMetadata === 'object' && fileMetadata.data) {
+            try {
+              // Convert base64 to blob
+              const base64Data = fileMetadata.data.split(',')[1] || fileMetadata.data;
+              const byteCharacters = atob(base64Data);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+              const blob = new Blob([byteArray], { type: fileMetadata.type || 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              
+              return {
+                url: url,
+                name: fileMetadata.name || 'file'
+              };
+            } catch (error) {
+              console.error('Failed to convert file metadata:', error);
+              return undefined;
+            }
+          }
+          
+          return undefined;
+        };
+        
         // Convert Supabase format to app format
         const convertedItems: ContainerItem[] = items.map(item => ({
           id: item.id || 0,
@@ -146,11 +183,11 @@ function App() {
           productionDays: item.production_days,
           productionReady: item.production_ready,
           client: item.client,
-          packingList: item.packing_list,
-          commercialInvoice: item.commercial_invoice,
-          payment: item.payment,
-          hbl: item.hbl,
-          certificates: item.certificates,
+          packingList: convertFileMetadata(item.packing_list),
+          commercialInvoice: convertFileMetadata(item.commercial_invoice),
+          payment: convertFileMetadata(item.payment),
+          hbl: convertFileMetadata(item.hbl),
+          certificates: convertFileMetadata(item.certificates),
         }));
         setContainerData(convertedItems);
       } catch (error) {
@@ -329,16 +366,62 @@ function App() {
 
 
   // Handle file upload
-  const handleFileUpload = (id: number, field: keyof ContainerItem, event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (id: number, field: keyof ContainerItem, event: React.ChangeEvent<HTMLInputElement>) => {
+    if (isReadOnly) {
+      alert('Read-only mode: Cannot upload files');
+      return;
+    }
+
     const file = event.target.files?.[0];
     if (!file) return;
     
-    // Store the file object for preview with original name
-    const fileUrl = URL.createObjectURL(file);
-    
-    setContainerData(containerData.map(item => 
-      item.id === id ? { ...item, [field]: { url: fileUrl, name: file.name } } : item
-    ));
+    try {
+      // Store the file object for preview with original name
+      const fileUrl = URL.createObjectURL(file);
+      const fileData = { url: fileUrl, name: file.name };
+      
+      // Update local state immediately for preview
+      setContainerData(containerData.map(item => 
+        item.id === id ? { ...item, [field]: fileData } : item
+      ));
+
+      // Convert file to base64 for Supabase storage
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result as string;
+        
+        // Map field names to Supabase column names
+        const supabaseFieldMap: Record<string, string> = {
+          packingList: 'packing_list',
+          commercialInvoice: 'commercial_invoice',
+          payment: 'payment',
+          hbl: 'hbl',
+          certificates: 'certificates'
+        };
+        
+        const supabaseField = supabaseFieldMap[field];
+        
+        // Save to Supabase with file metadata
+        const fileMetadata = {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          data: base64String
+        };
+        
+        await containerItemService.update(id, { 
+          [supabaseField]: fileMetadata 
+        });
+        
+        setShowSaveNotification(true);
+        setTimeout(() => setShowSaveNotification(false), 2000);
+      };
+      
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Failed to upload file:', error);
+      alert('Failed to upload file. Please try again.');
+    }
   };
 
   // Handle file preview
@@ -1297,8 +1380,8 @@ function App() {
 
       {/* Document Preview Modal */}
       {previewFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-8 bg-white rounded-lg shadow-2xl flex flex-col">
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
+          <div className="fixed inset-2 bg-white rounded-lg shadow-2xl flex flex-col">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
               <div className="flex items-center gap-3">
