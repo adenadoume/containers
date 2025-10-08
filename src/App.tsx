@@ -535,43 +535,91 @@ function App() {
   };
 
   // Import from Excel
-  const importFromExcel = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const importFromExcel = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (isReadOnly) {
+      alert('Read-only mode: Cannot import data');
+      return;
+    }
+
     const file = event.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = new Uint8Array(e.target?.result as ArrayBuffer);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet) as any[];
+    reader.onload = async (e) => {
+      try {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet) as any[];
 
-      const importedItems: ContainerItem[] = jsonData.map((row, index) => ({
-        id: importMode === 'replace' ? index + 1 : Math.max(...containerData.map(i => i.id), 0) + index + 1,
-        referenceCode: row['Reference Code'] || row['Ref'] || '',
-        supplier: row['Supplier'] || '',
-        product: row['Product'] || '',
-        cbm: parseFloat(row['CBM']) || 0,
-        cartons: parseInt(row['Cartons']) || 0,
-        grossWeight: parseFloat(row['Gross Weight']) || 0,
-        productCost: parseFloat(row['Product Cost']) || 0,
-        freightCost: parseFloat(row['Freight Cost']) || 0,
-        status: row['Status'] || 'Pending' as ContainerItem['status'],
-        awaiting: row['Awaiting'] ? (row['Awaiting'] as string).split(',').map(s => s.trim()) : ['-'],
-        productionDays: parseInt(row['Production Days']) || 0,
-        productionReady: row['Production Ready'] || '',
-        client: row['Client'] || '',
-      }));
+        // If replace mode, delete existing items first
+        if (importMode === 'replace') {
+          for (const item of containerData) {
+            await containerItemService.delete(item.id);
+          }
+        }
 
-      if (importMode === 'replace') {
-        setContainerData(importedItems);
-      } else {
-        setContainerData([...containerData, ...importedItems]);
-      }
+        // Create Supabase items from Excel data
+        const createdItems: ContainerItem[] = [];
+        for (const row of jsonData) {
+          const newItem = {
+            container_name: selectedContainer,
+            reference_code: row['Reference Code'] || row['Ref'] || '',
+            supplier: row['Supplier'] || '',
+            product: row['Product'] || '',
+            cbm: parseFloat(row['CBM']) || 0,
+            cartons: parseInt(row['Cartons']) || 0,
+            gross_weight: parseFloat(row['Gross Weight']) || 0,
+            product_cost: parseFloat(row['Product Cost']) || 0,
+            freight_cost: parseFloat(row['Freight Cost']) || 0,
+            status: row['Status'] || 'Pending' as const,
+            awaiting: row['Awaiting'] ? (row['Awaiting'] as string).split(',').map(s => s.trim()) : ['-'],
+            production_days: parseInt(row['Production Days']) || 0,
+            production_ready: row['Production Ready'] || '',
+            client: row['Client'] || '',
+          };
 
-      setShowImportModal(false);
-      if (excelImportRef.current) {
-        excelImportRef.current.value = '';
+          const created = await containerItemService.create(newItem);
+          createdItems.push({
+            id: created.id || 0,
+            referenceCode: created.reference_code,
+            supplier: created.supplier,
+            product: created.product,
+            cbm: created.cbm,
+            cartons: created.cartons,
+            grossWeight: created.gross_weight,
+            productCost: created.product_cost,
+            freightCost: created.freight_cost,
+            status: created.status,
+            awaiting: created.awaiting,
+            productionDays: created.production_days,
+            productionReady: created.production_ready,
+            client: created.client,
+            packingList: created.packing_list,
+            commercialInvoice: created.commercial_invoice,
+            payment: created.payment,
+            hbl: created.hbl,
+            certificates: created.certificates,
+          });
+        }
+
+        // Update local state
+        if (importMode === 'replace') {
+          setContainerData(createdItems);
+        } else {
+          setContainerData([...containerData, ...createdItems]);
+        }
+
+        setShowImportModal(false);
+        setShowSaveNotification(true);
+        setTimeout(() => setShowSaveNotification(false), 2000);
+        
+        if (excelImportRef.current) {
+          excelImportRef.current.value = '';
+        }
+      } catch (error) {
+        console.error('Failed to import Excel data:', error);
+        alert('Failed to import data. Please try again.');
       }
     };
     reader.readAsArrayBuffer(file);
