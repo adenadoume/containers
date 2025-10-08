@@ -1,0 +1,9 @@
+# Ignore development files
+node_modules
+.git
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Keep all source files for deployment
