@@ -360,17 +360,35 @@ function App() {
 
 
   // Delete row
-  const deleteRow = (id: number) => {
+  const deleteRow = async (id: number) => {
+    if (isReadOnly) {
+      alert('Read-only mode: Cannot delete items');
+      return;
+    }
+
     const item = containerData.find(i => i.id === id);
     const itemDescription = item?.product || item?.supplier || 'this item';
     
     if (window.confirm(`⚠️ Delete Item?\n\nAre you sure you want to delete "${itemDescription}"?\n\nThis action cannot be undone.`)) {
-      setContainerData(containerData.filter(item => item.id !== id));
+      try {
+        await containerItemService.delete(id);
+        setContainerData(containerData.filter(item => item.id !== id));
+        setShowSaveNotification(true);
+        setTimeout(() => setShowSaveNotification(false), 2000);
+      } catch (error) {
+        console.error('Failed to delete item:', error);
+        alert('Failed to delete item. Please try again.');
+      }
     }
   };
 
   // Delete attachment
-  const deleteAttachment = (id: number, field: keyof ContainerItem) => {
+  const deleteAttachment = async (id: number, field: keyof ContainerItem) => {
+    if (isReadOnly) {
+      alert('Read-only mode: Cannot delete attachments');
+      return;
+    }
+
     const fieldNames: Record<string, string> = {
       packingList: 'Packing List',
       commercialInvoice: 'Commercial Invoice',
@@ -382,9 +400,29 @@ function App() {
     const fieldName = fieldNames[field] || 'attachment';
     
     if (window.confirm(`🗑️ Delete ${fieldName}?\n\nAre you sure you want to delete this ${fieldName.toLowerCase()}?`)) {
-      setContainerData(containerData.map(item => 
-        item.id === id ? { ...item, [field]: undefined } : item
-      ));
+      try {
+        // Map field names to Supabase column names
+        const supabaseFieldMap: Record<string, string> = {
+          packingList: 'packing_list',
+          commercialInvoice: 'commercial_invoice',
+          payment: 'payment',
+          hbl: 'hbl',
+          certificates: 'certificates'
+        };
+        
+        const supabaseField = supabaseFieldMap[field];
+        await containerItemService.update(id, { [supabaseField]: null });
+        
+        setContainerData(containerData.map(item => 
+          item.id === id ? { ...item, [field]: undefined } : item
+        ));
+        
+        setShowSaveNotification(true);
+        setTimeout(() => setShowSaveNotification(false), 2000);
+      } catch (error) {
+        console.error('Failed to delete attachment:', error);
+        alert('Failed to delete attachment. Please try again.');
+      }
     }
   };
 
