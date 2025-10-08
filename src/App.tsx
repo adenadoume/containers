@@ -1297,10 +1297,10 @@ function App() {
 
       {/* Document Preview Modal */}
       {previewFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-1">
-          <div className="bg-white rounded-lg shadow-2xl flex flex-col" style={{ width: '96vw', height: '96vh' }}>
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-8 bg-white rounded-lg shadow-2xl flex flex-col">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <Eye className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-semibold text-gray-900">{previewFile.name}</h3>
@@ -1311,10 +1311,10 @@ function App() {
               >
                 <X className="w-6 h-6" />
               </button>
-                        </div>
+            </div>
             
             {/* Modal Content */}
-            <div className="flex-1 overflow-auto p-4 bg-gray-50">
+            <div className="flex-1 overflow-auto bg-gray-50">
               {previewFile.type === 'pdf' && (
                 <iframe
                   src={previewFile.url}
@@ -1335,12 +1335,12 @@ function App() {
                     >
                       Download File
                     </a>
-                      </div>
-                    </div>
-              )}
                   </div>
                 </div>
-              </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Import Modal */}
