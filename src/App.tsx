@@ -1381,7 +1381,7 @@ function App() {
       {/* Document Preview Modal */}
       {previewFile && (
         <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
-          <div className="fixed inset-2 bg-white rounded-lg shadow-2xl flex flex-col">
+          <div className="bg-white rounded-lg shadow-2xl flex flex-col" style={{ position: 'fixed', top: '10px', left: '10px', right: '10px', bottom: '10px' }}>
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
               <div className="flex items-center gap-3">
