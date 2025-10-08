@@ -106,6 +106,9 @@ function App() {
   }, []);
 
   const [containerData, setContainerData] = useState<ContainerItem[]>([]);
+  
+  // Read-only mode check (for Vercel public access)
+  const isReadOnly = import.meta.env.VITE_READ_ONLY === 'true';
 
   // Load containers from Supabase on mount
   useEffect(() => {
@@ -163,6 +166,11 @@ function App() {
 
   // Add new row
   const addNewRow = async () => {
+    if (isReadOnly) {
+      alert('Read-only mode: Changes are not allowed on this deployment.');
+      return;
+    }
+    
     const newItem = {
       container_name: selectedContainer,
       reference_code: '',
@@ -210,6 +218,11 @@ function App() {
 
   // Add new container
   const addNewContainer = async () => {
+    if (isReadOnly) {
+      alert('Read-only mode: Changes are not allowed on this deployment.');
+      return;
+    }
+    
     if (newContainerName.trim() && !containers.includes(newContainerName.trim())) {
       const newContainer = newContainerName.trim();
       try {
@@ -238,6 +251,13 @@ function App() {
   // Save edited value
   const saveEdit = async () => {
     if (!editingCell) return;
+    
+    if (isReadOnly) {
+      alert('Read-only mode: Changes are not allowed on this deployment.');
+      setEditingCell(null);
+      setEditValue('');
+      return;
+    }
     
     const itemToUpdate = containerData.find(item => item.id === editingCell.id);
     if (!itemToUpdate) return;
@@ -288,6 +308,11 @@ function App() {
 
   // Update status
   const updateStatus = async (id: number, status: ContainerItem['status']) => {
+    if (isReadOnly) {
+      alert('Read-only mode: Changes are not allowed on this deployment.');
+      return;
+    }
+    
     try {
       await containerItemService.update(id, { status });
       setContainerData(containerData.map(item => 
@@ -552,63 +577,6 @@ function App() {
     reader.readAsArrayBuffer(file);
   };
 
-  // Export ALL localStorage data to JSON
-  const exportAllDataToJSON = () => {
-    const allData: any = {};
-    
-    // Get all containers
-    const containersData = localStorage.getItem('containers');
-    if (containersData) {
-      allData.containers = JSON.parse(containersData);
-    }
-    
-    // Get all container data
-    const containerKeys = Object.keys(localStorage).filter(key => key.startsWith('container_'));
-    containerKeys.forEach(key => {
-      const data = localStorage.getItem(key);
-      if (data) {
-        allData[key] = JSON.parse(data);
-      }
-    });
-    
-    // Create and download JSON file
-    const jsonString = JSON.stringify(allData, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'containers_data_backup.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  // Import ALL data from JSON
-  const importAllDataFromJSON = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const importedData = JSON.parse(e.target?.result as string);
-        
-        // Import all data to localStorage
-        Object.keys(importedData).forEach(key => {
-          localStorage.setItem(key, JSON.stringify(importedData[key]));
-        });
-        
-        // Reload the page to reflect changes
-        window.location.reload();
-      } catch (error) {
-        console.error('Error importing data:', error);
-        alert('Error importing data. Please make sure the file is valid JSON.');
-      }
-    };
-    reader.readAsText(file);
-  };
-
   // Calculate summary metrics
   const totalCBM = containerData.reduce((sum, item) => sum + item.cbm, 0);
   const totalCartons = containerData.reduce((sum, item) => sum + item.cartons, 0);
@@ -719,23 +687,6 @@ function App() {
               <FileSpreadsheet className="w-5 h-5" />
               Import from Excel
             </button>
-            <button
-              onClick={exportAllDataToJSON}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/50"
-            >
-              <Download className="w-5 h-5" />
-              Export All Data
-            </button>
-            <label className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg font-semibold hover:from-orange-700 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-orange-500/50 cursor-pointer">
-              <Upload className="w-5 h-5" />
-              Import All Data
-              <input
-                type="file"
-                accept=".json"
-                onChange={importAllDataFromJSON}
-                className="hidden"
-              />
-            </label>
                   </div>
                   </div>
 

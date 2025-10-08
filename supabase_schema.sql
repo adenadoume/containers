@@ -68,11 +68,13 @@ CREATE POLICY "Allow public delete access on container_items" ON container_items
   FOR DELETE USING (true);
 
 -- Insert default containers
+-- To add/remove containers: simply add/remove lines below
+-- Format: ('CONTAINER_NAME'),
 INSERT INTO containers (name) VALUES 
   ('I110.12 NORTH'),
-  ('I110.11 SOUTH'),
-  ('I110.9 WEST'),
-  ('I110.8 EAST'),
-  ('I110.7 CENTRAL')
+  ('I110.11 SOUTH')
+  -- Add more containers here as needed:
+  -- ('I269.1'),
+  -- ('I269.2'),
 ON CONFLICT (name) DO NOTHING;
 
