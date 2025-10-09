@@ -910,25 +910,25 @@ function App() {
             <table className="w-full">
               <thead className="bg-gray-900 border-b-2 border-gray-600">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Code</th>
-                  <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '280px' }}>Supplier</th>
-                  <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '180px' }}>Product</th>
-                  <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>CBM</th>
-                  <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Cartons</th>
-                  <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Gross Weight</th>
-                  <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Product Cost</th>
-                  <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Freight Cost</th>
-                  <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '130px' }}>Awaiting</th>
-                  <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Production Days</th>
-                  <th className="px-4 py-3 text-center text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Production Ready</th>
-                  <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
-                  <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
-                  <th className="px-4 py-3 text-center text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>PL</th>
-                  <th className="px-4 py-3 text-center text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>CI</th>
-                  <th className="px-4 py-3 text-center text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Payment</th>
-                  <th className="px-4 py-3 text-center text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>HBL</th>
-                  <th className="px-4 py-3 text-center text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Certificates</th>
-                  <th className="px-4 py-3 text-center text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Actions</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Code</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '280px' }}>Supplier</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '180px' }}>Product</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>CBM</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Cartons</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Gross Weight</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Product Cost</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Freight Cost</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '130px' }}>Awaiting</th>
+                  <th className="px-3 py-2 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Production Days</th>
+                  <th className="px-3 py-2 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Production Ready</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '140px' }}>Status</th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '150px' }}>Client</th>
+                  <th className="px-3 py-2 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>PL</th>
+                  <th className="px-3 py-2 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>CI</th>
+                  <th className="px-3 py-2 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Payment</th>
+                  <th className="px-3 py-2 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>HBL</th>
+                  <th className="px-3 py-2 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Certificates</th>
+                  <th className="px-3 py-2 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -941,7 +941,7 @@ function App() {
                   >
                     {/* Editable cells */}
                     <td 
-                      className="px-4 py-3 text-xl font-medium text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm font-medium text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'referenceCode', item.referenceCode)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'referenceCode' ? (
@@ -952,14 +952,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none"
                         />
                       ) : (
                         item.referenceCode || <span className="text-gray-500">Click to edit</span>
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-xl text-gray-300 cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'supplier', item.supplier)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'supplier' ? (
@@ -970,14 +970,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none"
                         />
                       ) : (
                         item.supplier || <span className="text-gray-500">Click to edit</span>
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-xl text-gray-300 cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm text-gray-300 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'product', item.product)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'product' ? (
@@ -988,14 +988,14 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none"
                         />
                       ) : (
                         item.product || <span className="text-gray-400">Click to edit</span>
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-xl text-right cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm text-right cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'cbm', item.cbm)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cbm' ? (
@@ -1006,7 +1006,7 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none text-right"
                           placeholder="0.00"
                         />
                       ) : (
@@ -1014,7 +1014,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-xl text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'cartons', item.cartons)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'cartons' ? (
@@ -1025,7 +1025,7 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none text-right"
                           placeholder="0"
                         />
                       ) : (
@@ -1033,7 +1033,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-xl text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'grossWeight', item.grossWeight)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'grossWeight' ? (
@@ -1044,7 +1044,7 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none text-right"
                           placeholder="0"
                         />
                       ) : (
@@ -1052,7 +1052,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-xl text-right font-medium text-green-400 cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm text-right font-medium text-green-400 cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'productCost', item.productCost)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'productCost' ? (
@@ -1063,7 +1063,7 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none text-right"
                           placeholder="0.00"
                         />
                       ) : (
@@ -1071,7 +1071,7 @@ function App() {
                       )}
                     </td>
                     <td 
-                      className="px-4 py-3 text-xl text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'freightCost', item.freightCost)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'freightCost' ? (
@@ -1082,7 +1082,7 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none text-right"
                           placeholder="0"
                         />
                       ) : (
@@ -1110,7 +1110,7 @@ function App() {
                       </select>
                     </td>
                     <td 
-                      className="px-4 py-3 text-xl text-right text-white cursor-pointer hover:bg-blue-900/30"
+                      className="px-3 py-2 text-sm text-right text-white cursor-pointer hover:bg-blue-900/30"
                       onClick={() => startEditing(item.id, 'productionDays', item.productionDays)}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'productionDays' ? (
@@ -1121,7 +1121,7 @@ function App() {
                           onBlur={saveEdit}
                           onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                           autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none text-right"
+                          className="w-full px-2 py-1 bg-gray-700 text-white text-sm border border-blue-500 rounded focus:outline-none text-right"
                           placeholder="0"
                         />
                       ) : (
