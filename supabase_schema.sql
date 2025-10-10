@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS container_items (
   container_name VARCHAR(100) NOT NULL REFERENCES containers(name) ON DELETE CASCADE,
   reference_code VARCHAR(100),
   supplier TEXT,
-  product TEXT,
   cbm DECIMAL(10,2) DEFAULT 0,
   cartons INTEGER DEFAULT 0,
   gross_weight DECIMAL(10,2) DEFAULT 0,
