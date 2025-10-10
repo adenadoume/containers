@@ -1,9 +1,11 @@
-# Ignore development files
-node_modules
-.git
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Ignore API examples folder (contains example code with dependencies not needed for production)
+api/examples/
 
-# Keep all source files for deployment
+# Ignore SQL files (not needed in deployment)
+*.sql
+
+# Ignore screenshots and test files
+*.jpg
+*.jpeg
+*.png
+public/test.txt
