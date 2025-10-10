@@ -8,7 +8,6 @@ export interface ContainerItem {
   containerId: number;
   referenceCode: string;
   supplier: string;
-  product: string;
   cbm: number;
   cartons: number;
   grossWeight: number;
@@ -26,7 +25,6 @@ export interface ContainerItem {
 
 export interface ParsedEmailData {
   supplier: string;
-  product: string;
   cbm: number;
   cartons: number;
   grossWeight: number;
