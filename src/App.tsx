@@ -7,7 +7,6 @@ interface ContainerItem {
   id: number;
   referenceCode: string;
   supplier: string;
-  product: string;
   cbm: number;
   cartons: number;
   grossWeight: number;
@@ -32,7 +31,7 @@ type EditingCell = {
 
 function App() {
   // Force rebuild - TypeScript errors resolved
-  const [selectedContainer, setSelectedContainer] = useState('I110.12 NORTH');
+  const [selectedContainer, setSelectedContainer] = useState('I110.11 SOUTH');
   const [showContainerDropdown, setShowContainerDropdown] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ type: string; url: string; name: string } | null>(null);
   const [editingCell, setEditingCell] = useState<EditingCell>(null);
@@ -172,7 +171,6 @@ function App() {
           id: item.id || 0,
           referenceCode: item.reference_code,
           supplier: item.supplier,
-          product: item.product,
           cbm: item.cbm,
           cartons: item.cartons,
           grossWeight: item.gross_weight,
@@ -212,7 +210,6 @@ function App() {
       container_name: selectedContainer,
       reference_code: '',
       supplier: '',
-      product: '',
       cbm: 0,
       cartons: 0,
       gross_weight: 0,
@@ -231,7 +228,6 @@ function App() {
         id: created.id || 0,
         referenceCode: created.reference_code,
         supplier: created.supplier,
-        product: created.product,
         cbm: created.cbm,
         cartons: created.cartons,
         grossWeight: created.gross_weight,
@@ -450,7 +446,7 @@ function App() {
     }
 
     const item = containerData.find(i => i.id === id);
-    const itemDescription = item?.product || item?.supplier || 'this item';
+    const itemDescription = item?.supplier || item?.referenceCode || 'this item';
     
     if (window.confirm(`⚠️ Delete Item?\n\nAre you sure you want to delete "${itemDescription}"?\n\nThis action cannot be undone.`)) {
       try {
@@ -514,7 +510,6 @@ function App() {
     const exportData = containerData.map(item => ({
       'Reference Code': item.referenceCode,
       'Supplier': item.supplier,
-      'Product': item.product,
       'CBM': item.cbm,
       'Cartons': item.cartons,
       'Gross Weight': item.grossWeight,
@@ -687,7 +682,6 @@ function App() {
             container_name: selectedContainer,
             reference_code: row['Reference Code'] || row['Ref'] || '',
             supplier: row['Supplier'] || '',
-            product: row['Product'] || '',
             cbm: parseFloat(row['CBM']) || 0,
             cartons: parseInt(row['Cartons']) || 0,
             gross_weight: parseFloat(row['Gross Weight']) || 0,
@@ -705,7 +699,6 @@ function App() {
             id: created.id || 0,
             referenceCode: created.reference_code,
             supplier: created.supplier,
-            product: created.product,
             cbm: created.cbm,
             cartons: created.cartons,
             grossWeight: created.gross_weight,
@@ -912,7 +905,6 @@ function App() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '80px' }}>Code</th>
                   <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '280px' }}>Supplier</th>
-                  <th className="px-4 py-3 text-left text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '180px' }}>Product</th>
                   <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>CBM</th>
                   <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '100px' }}>Cartons</th>
                   <th className="px-4 py-3 text-right text-xl font-semibold text-gray-300 uppercase tracking-wider" style={{ minWidth: '120px' }}>Gross Weight</th>
@@ -974,24 +966,6 @@ function App() {
                         />
                       ) : (
                         item.supplier || <span className="text-gray-500">Click to edit</span>
-                      )}
-                    </td>
-                    <td 
-                      className="px-4 py-3 text-xl text-gray-300 cursor-pointer hover:bg-blue-900/30"
-                      onClick={() => startEditing(item.id, 'product', item.product)}
-                    >
-                      {editingCell?.id === item.id && editingCell?.field === 'product' ? (
-                        <input
-                          type="text"
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          onBlur={saveEdit}
-                          onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
-                          autoFocus
-                          className="w-full px-2 py-1 bg-gray-700 text-white border border-blue-500 rounded focus:outline-none"
-                        />
-                      ) : (
-                        item.product || <span className="text-gray-400">Click to edit</span>
                       )}
                     </td>
                     <td 
@@ -1512,7 +1486,7 @@ function App() {
 
               <div className="text-sm text-gray-400 bg-gray-700/30 p-4 rounded-lg">
                 <p className="font-semibold text-gray-300 mb-2">Expected columns:</p>
-                <p className="text-xs">Reference Code, Supplier, Product, CBM, Cartons, Gross Weight, Product Cost, Freight Cost, Client, Status, Awaiting</p>
+                <p className="text-xs">Reference Code, Supplier, CBM, Cartons, Gross Weight, Product Cost, Freight Cost, Client, Status, Awaiting</p>
                     </div>
             </div>
           </div>
