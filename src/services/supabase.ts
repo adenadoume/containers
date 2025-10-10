@@ -22,7 +22,6 @@ export interface ContainerItem {
   container_name: string;
   reference_code: string;
   supplier: string;
-  product: string;
   cbm: number;
   cartons: number;
   gross_weight: number;
@@ -141,4 +140,5 @@ export const containerItemService = {
     if (error) throw error;
   }
 };
+
 
