@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, FileText, Eye, Plus, X, Upload, Trash2, Download, FileSpreadsheet } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { containerService, containerItemService } from './services/supabase';
 
 interface ContainerItem {
@@ -591,11 +591,13 @@ function App() {
       v: 'Total CBM:', 
       t: 's',
       s: {
-        font: { name: 'Calibri', sz: 12, bold: true },
-        alignment: { horizontal: 'right' },
+        font: { name: 'Calibri', sz: 16, bold: true },
+        alignment: { horizontal: 'right', vertical: 'center' },
         border: {
-          top: { style: 'thin' }, bottom: { style: 'thin' },
-          left: { style: 'thin' }, right: { style: 'thin' }
+          top: { style: 'thin', color: { rgb: '000000' } }, 
+          bottom: { style: 'thin', color: { rgb: '000000' } },
+          left: { style: 'thin', color: { rgb: '000000' } }, 
+          right: { style: 'thin', color: { rgb: '000000' } }
         }
       }
     };
@@ -604,11 +606,13 @@ function App() {
       t: 'n',
       z: '0.00',
       s: {
-        font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: '0070C0' } },
-        alignment: { horizontal: 'right' },
+        font: { name: 'Calibri', sz: 16, bold: true, color: { rgb: '0070C0' } },
+        alignment: { horizontal: 'right', vertical: 'center' },
         border: {
-          top: { style: 'thin' }, bottom: { style: 'thin' },
-          left: { style: 'thin' }, right: { style: 'thin' }
+          top: { style: 'thin', color: { rgb: '000000' } }, 
+          bottom: { style: 'thin', color: { rgb: '000000' } },
+          left: { style: 'thin', color: { rgb: '000000' } }, 
+          right: { style: 'thin', color: { rgb: '000000' } }
         },
         fill: { fgColor: { rgb: 'E7F3FF' } }
       }
@@ -621,11 +625,13 @@ function App() {
       v: 'Total Cost:', 
       t: 's',
       s: {
-        font: { name: 'Calibri', sz: 12, bold: true },
-        alignment: { horizontal: 'right' },
+        font: { name: 'Calibri', sz: 16, bold: true },
+        alignment: { horizontal: 'right', vertical: 'center' },
         border: {
-          top: { style: 'thin' }, bottom: { style: 'thin' },
-          left: { style: 'thin' }, right: { style: 'thin' }
+          top: { style: 'thin', color: { rgb: '000000' } }, 
+          bottom: { style: 'thin', color: { rgb: '000000' } },
+          left: { style: 'thin', color: { rgb: '000000' } }, 
+          right: { style: 'thin', color: { rgb: '000000' } }
         }
       }
     };
@@ -634,11 +640,13 @@ function App() {
       t: 'n',
       z: '$#,##0',
       s: {
-        font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: '00B050' } },
-        alignment: { horizontal: 'right' },
+        font: { name: 'Calibri', sz: 16, bold: true, color: { rgb: '00B050' } },
+        alignment: { horizontal: 'right', vertical: 'center' },
         border: {
-          top: { style: 'thin' }, bottom: { style: 'thin' },
-          left: { style: 'thin' }, right: { style: 'thin' }
+          top: { style: 'thin', color: { rgb: '000000' } }, 
+          bottom: { style: 'thin', color: { rgb: '000000' } },
+          left: { style: 'thin', color: { rgb: '000000' } }, 
+          right: { style: 'thin', color: { rgb: '000000' } }
         },
         fill: { fgColor: { rgb: 'E7FFE7' } }
       }
@@ -651,11 +659,13 @@ function App() {
       v: 'CBM Ready to Ship:', 
       t: 's',
       s: {
-        font: { name: 'Calibri', sz: 12, bold: true },
-        alignment: { horizontal: 'right' },
+        font: { name: 'Calibri', sz: 16, bold: true },
+        alignment: { horizontal: 'right', vertical: 'center' },
         border: {
-          top: { style: 'thin' }, bottom: { style: 'thin' },
-          left: { style: 'thin' }, right: { style: 'thin' }
+          top: { style: 'thin', color: { rgb: '000000' } }, 
+          bottom: { style: 'thin', color: { rgb: '000000' } },
+          left: { style: 'thin', color: { rgb: '000000' } }, 
+          right: { style: 'thin', color: { rgb: '000000' } }
         }
       }
     };
@@ -664,11 +674,13 @@ function App() {
       t: 'n',
       z: '0.00',
       s: {
-        font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: '00B050' } },
-        alignment: { horizontal: 'right' },
+        font: { name: 'Calibri', sz: 16, bold: true, color: { rgb: '00B050' } },
+        alignment: { horizontal: 'right', vertical: 'center' },
         border: {
-          top: { style: 'thin' }, bottom: { style: 'thin' },
-          left: { style: 'thin' }, right: { style: 'thin' }
+          top: { style: 'thin', color: { rgb: '000000' } }, 
+          bottom: { style: 'thin', color: { rgb: '000000' } },
+          left: { style: 'thin', color: { rgb: '000000' } }, 
+          right: { style: 'thin', color: { rgb: '000000' } }
         },
         fill: { fgColor: { rgb: 'E7FFE7' } }
       }
@@ -680,12 +692,36 @@ function App() {
       e: { r: summaryStartRow + 2, c: range.e.c }
     });
     
-    // Create a zip file with Excel and attachments
+    // Generate Excel buffer
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    
+    // Check if there are any attachments
+    let hasAttachments = false;
+    for (const item of containerData) {
+      if (item.packingList || item.commercialInvoice || item.payment || item.hbl || item.certificates) {
+        hasAttachments = true;
+        break;
+      }
+    }
+    
+    // If no attachments, just download the Excel file
+    if (!hasAttachments) {
+      const url = URL.createObjectURL(new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${selectedContainer} CBM & PI.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      return;
+    }
+    
+    // If there are attachments, create a zip file
     const JSZip = (await import('jszip')).default;
     const zip = new JSZip();
     
     // Add Excel file to zip with new naming format: [CONTAINER NAME] CBM & PI.xlsx
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     zip.file(`${selectedContainer} CBM & PI.xlsx`, excelBuffer);
     
     // Add attachments organized by reference code
