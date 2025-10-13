@@ -529,40 +529,164 @@ function App() {
     // Set zoom to 150%
     worksheet['!zoom'] = { scale: 150 };
     
-    // Auto-size columns
+    // Auto-size columns to fit content
     const maxWidth = 50;
     const colWidths = Object.keys(exportData[0] || {}).map(key => ({
       wch: Math.min(maxWidth, Math.max(key.length, ...exportData.map(row => String(row[key as keyof typeof row]).length)))
     }));
     worksheet['!cols'] = colWidths;
     
-    // Add alternating row colors (light blue for even rows)
+    // Get the range of data
     const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1');
-    for (let row = range.s.r; row <= range.e.r; row++) {
+    const dataEndRow = range.e.r;
+    
+    // Style cells: Calibri 11pt, borders, alternating rows, bold headers
+    for (let row = range.s.r; row <= dataEndRow; row++) {
       for (let col = range.s.c; col <= range.e.c; col++) {
         const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
         if (!worksheet[cellAddress]) continue;
         
-        // Apply light blue background to even rows (excluding header row)
+        // Initialize cell style
+        if (!worksheet[cellAddress].s) worksheet[cellAddress].s = {};
+        
+        // Base style: Calibri 11pt with thin borders
+        worksheet[cellAddress].s = {
+          font: {
+            name: 'Calibri',
+            sz: 11,
+            bold: row === 0 // Bold for header row
+          },
+          border: {
+            top: { style: 'thin', color: { rgb: '000000' } },
+            bottom: { style: 'thin', color: { rgb: '000000' } },
+            left: { style: 'thin', color: { rgb: '000000' } },
+            right: { style: 'thin', color: { rgb: '000000' } }
+          },
+          alignment: {
+            vertical: 'center',
+            horizontal: col >= 2 && col <= 6 ? 'right' : 'left' // Right align numbers
+          }
+        };
+        
+        // Alternating light blue rows (excluding header)
         if (row > 0 && row % 2 === 0) {
-          if (!worksheet[cellAddress].s) worksheet[cellAddress].s = {};
-          worksheet[cellAddress].s = {
-            ...worksheet[cellAddress].s,
-            fill: {
-              fgColor: { rgb: "ADD8E6" } // Light blue color
-            }
+          worksheet[cellAddress].s.fill = {
+            fgColor: { rgb: 'DBEEF4' } // Light blue
           };
         }
       }
     }
     
+    // Add summary section 3 rows below the data
+    const summaryStartRow = dataEndRow + 3;
+    
+    // Calculate columns for formulas
+    const cbmCol = 2; // Column C (0-indexed: A=0, B=1, C=2)
+    const productCostCol = 5; // Column F
+    
+    // Summary Box 1: Total CBM
+    const totalCbmLabelCell = XLSX.utils.encode_cell({ r: summaryStartRow, c: 0 });
+    const totalCbmValueCell = XLSX.utils.encode_cell({ r: summaryStartRow, c: 1 });
+    worksheet[totalCbmLabelCell] = { 
+      v: 'Total CBM:', 
+      t: 's',
+      s: {
+        font: { name: 'Calibri', sz: 12, bold: true },
+        alignment: { horizontal: 'right' },
+        border: {
+          top: { style: 'thin' }, bottom: { style: 'thin' },
+          left: { style: 'thin' }, right: { style: 'thin' }
+        }
+      }
+    };
+    worksheet[totalCbmValueCell] = { 
+      f: `SUM(${XLSX.utils.encode_col(cbmCol)}2:${XLSX.utils.encode_col(cbmCol)}${dataEndRow + 1})`,
+      t: 'n',
+      z: '0.00',
+      s: {
+        font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: '0070C0' } },
+        alignment: { horizontal: 'right' },
+        border: {
+          top: { style: 'thin' }, bottom: { style: 'thin' },
+          left: { style: 'thin' }, right: { style: 'thin' }
+        },
+        fill: { fgColor: { rgb: 'E7F3FF' } }
+      }
+    };
+    
+    // Summary Box 2: Total Cost
+    const totalCostLabelCell = XLSX.utils.encode_cell({ r: summaryStartRow + 1, c: 0 });
+    const totalCostValueCell = XLSX.utils.encode_cell({ r: summaryStartRow + 1, c: 1 });
+    worksheet[totalCostLabelCell] = { 
+      v: 'Total Cost:', 
+      t: 's',
+      s: {
+        font: { name: 'Calibri', sz: 12, bold: true },
+        alignment: { horizontal: 'right' },
+        border: {
+          top: { style: 'thin' }, bottom: { style: 'thin' },
+          left: { style: 'thin' }, right: { style: 'thin' }
+        }
+      }
+    };
+    worksheet[totalCostValueCell] = { 
+      f: `SUM(${XLSX.utils.encode_col(productCostCol)}2:${XLSX.utils.encode_col(productCostCol)}${dataEndRow + 1}) + SUM(${XLSX.utils.encode_col(productCostCol + 1)}2:${XLSX.utils.encode_col(productCostCol + 1)}${dataEndRow + 1})`,
+      t: 'n',
+      z: '$#,##0',
+      s: {
+        font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: '00B050' } },
+        alignment: { horizontal: 'right' },
+        border: {
+          top: { style: 'thin' }, bottom: { style: 'thin' },
+          left: { style: 'thin' }, right: { style: 'thin' }
+        },
+        fill: { fgColor: { rgb: 'E7FFE7' } }
+      }
+    };
+    
+    // Summary Box 3: CBM Ready to Ship
+    const readyCbmLabelCell = XLSX.utils.encode_cell({ r: summaryStartRow + 2, c: 0 });
+    const readyCbmValueCell = XLSX.utils.encode_cell({ r: summaryStartRow + 2, c: 1 });
+    worksheet[readyCbmLabelCell] = { 
+      v: 'CBM Ready to Ship:', 
+      t: 's',
+      s: {
+        font: { name: 'Calibri', sz: 12, bold: true },
+        alignment: { horizontal: 'right' },
+        border: {
+          top: { style: 'thin' }, bottom: { style: 'thin' },
+          left: { style: 'thin' }, right: { style: 'thin' }
+        }
+      }
+    };
+    worksheet[readyCbmValueCell] = { 
+      f: `SUMIF(${XLSX.utils.encode_col(10)}2:${XLSX.utils.encode_col(10)}${dataEndRow + 1},"Ready to Ship",${XLSX.utils.encode_col(cbmCol)}2:${XLSX.utils.encode_col(cbmCol)}${dataEndRow + 1})`,
+      t: 'n',
+      z: '0.00',
+      s: {
+        font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: '00B050' } },
+        alignment: { horizontal: 'right' },
+        border: {
+          top: { style: 'thin' }, bottom: { style: 'thin' },
+          left: { style: 'thin' }, right: { style: 'thin' }
+        },
+        fill: { fgColor: { rgb: 'E7FFE7' } }
+      }
+    };
+    
+    // Update range to include summary boxes
+    worksheet['!ref'] = XLSX.utils.encode_range({
+      s: { r: 0, c: 0 },
+      e: { r: summaryStartRow + 2, c: range.e.c }
+    });
+    
     // Create a zip file with Excel and attachments
     const JSZip = (await import('jszip')).default;
     const zip = new JSZip();
     
-    // Add Excel file to zip
+    // Add Excel file to zip with new naming format: [CONTAINER NAME] CBM & PI.xlsx
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    zip.file(`Container_${selectedContainer}_${new Date().toISOString().split('T')[0]}.xlsx`, excelBuffer);
+    zip.file(`${selectedContainer} CBM & PI.xlsx`, excelBuffer);
     
     // Add attachments organized by reference code
     for (const item of containerData) {
@@ -628,7 +752,7 @@ function App() {
     const url = URL.createObjectURL(zipBuffer);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Container_${selectedContainer}_with_attachments.zip`;
+    a.download = `${selectedContainer} CBM & PI.zip`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
